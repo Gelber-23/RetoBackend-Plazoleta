@@ -28,7 +28,7 @@ public class RestaurantRequest {
     @Pattern(regexp = "^\\+?\\d{1,12}$", message = "Invalid phone number format")
     private String phone;
 
-    @NotBlank(message = "Phone is required")
+    @NotBlank(message = "Logo is required")
     @URL(message = "Invalid URL format")
     private String urlLogo;
 
