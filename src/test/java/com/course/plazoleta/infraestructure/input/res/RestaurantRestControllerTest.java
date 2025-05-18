@@ -79,7 +79,7 @@ class RestaurantRestControllerTest {
     }
 
     @Test
-    void shouldGetAllRolesSuccessfully() {
+    void shouldGetAllRestaurantsSuccessfully() {
         List<RestaurantResponse> responseList = Collections.singletonList(restaurantResponseMapper.toResponse(restaurant));
 
         when(restaurantHandler.getAllRestaurants()).thenReturn(responseList);
@@ -92,7 +92,7 @@ class RestaurantRestControllerTest {
     }
 
     @Test
-    void shouldDeleteRoleSuccessfully() {
+    void shouldDeleteRestaurantSuccessfully() {
         int restaurantId = 1;
 
         ResponseEntity<Void> response = restaurantRestController.deleteRestaurantById(restaurantId);
