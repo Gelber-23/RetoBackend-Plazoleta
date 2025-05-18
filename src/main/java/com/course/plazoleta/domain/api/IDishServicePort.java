@@ -13,4 +13,6 @@ public interface IDishServicePort {
 
     List<Dish> getAllDishes();
 
+    void  updateDish(Dish dish);
+
 }

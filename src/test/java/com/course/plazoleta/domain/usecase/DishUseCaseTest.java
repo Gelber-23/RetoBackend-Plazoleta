@@ -65,5 +65,9 @@ class DishUseCaseTest {
         verify(dishPersistencePort).getAllDishes();
     }
 
-
+    @Test
+    void shouldUpdateDish() {
+        dishUseCase.updateDish(dish);
+        verify(dishPersistencePort).updateDish(dish);
+    }
 }
