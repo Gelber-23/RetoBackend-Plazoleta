@@ -1,5 +1,6 @@
 package com.course.plazoleta.application.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +12,8 @@ public class RestaurantRequest {
 
     @NotBlank(message = "Name is required")
     @Pattern(regexp = ".*\\D.*", message = "The name cannot be composed only of numbers")
+    @Schema(description = "Restaurant name", example = "Pepe Grill")
+
     private String name;
 
     @NotBlank(message = "Address is required")
@@ -31,6 +34,7 @@ public class RestaurantRequest {
 
     @NotBlank(message = "NIT is required")
     @Pattern(regexp = "^\\d+$", message = "NIT must contain only numbers")
+    @Schema(description = "NIT", example = "145254")
     private String nit;
 
 }
