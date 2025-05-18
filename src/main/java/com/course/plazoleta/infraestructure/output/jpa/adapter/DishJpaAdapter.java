@@ -35,4 +35,9 @@ public class DishJpaAdapter  implements IDishPersistencePort {
         }
         return dishEntityMapper.toModelList(dishEntityList);
     }
+
+    @Override
+    public void updateDish(Dish dish) {
+
+    }
 }

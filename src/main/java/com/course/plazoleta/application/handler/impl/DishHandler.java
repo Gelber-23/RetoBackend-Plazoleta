@@ -1,9 +1,11 @@
 package com.course.plazoleta.application.handler.impl;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
+import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
 import com.course.plazoleta.application.mapper.request.IDishRequestMapper;
+import com.course.plazoleta.application.mapper.request.IDishUpdateRequestMapper;
 import com.course.plazoleta.application.mapper.response.IDishResponseMapper;
 import com.course.plazoleta.domain.api.IDishServicePort;
 import com.course.plazoleta.domain.model.Dish;
@@ -19,6 +21,7 @@ import java.util.List;
 public class DishHandler implements IDishHandler {
     private final IDishServicePort dishServicePort;
     private final IDishRequestMapper dishRequestMapper;
+    private final IDishUpdateRequestMapper dishUpdateRequestMapper;
     private final IDishResponseMapper dishResponseMapper;
 
 
@@ -38,4 +41,11 @@ public class DishHandler implements IDishHandler {
     public List<DishResponse> getAllDishes() {
         return dishResponseMapper.toResponseList(dishServicePort.getAllDishes());
     }
+
+    @Override
+    public void updateDish(DishUpdateRequest dish) {
+        dishServicePort.updateDish(dishUpdateRequestMapper.toDish(dish));
+    }
+
+
 }
