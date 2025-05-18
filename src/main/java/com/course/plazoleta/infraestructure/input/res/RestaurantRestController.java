@@ -20,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/restaurant/")
-@Tag(name = "RESTAURANT", description = "Endpoints for restaurant")
+@Tag(name = "RESTAURANT", description = "Endpoints for restaurants")
 @RequiredArgsConstructor
 public class RestaurantRestController {
 
