@@ -31,7 +31,7 @@ class DishUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        dish = new Dish(1L, "Burger", 3, "Beef Burger", 2000, "http://image.com/burger.png", 7, false);
+        dish = new Dish(1L, "Burger", 3L, "Beef Burger", 2000, "http://image.com/burger.png", 7, false);
 
     }
 

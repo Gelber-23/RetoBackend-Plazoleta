@@ -91,4 +91,6 @@ class RestaurantJpaAdapterTest {
 
         verify(restaurantRepository).deleteById(id);
     }
+
+
 }

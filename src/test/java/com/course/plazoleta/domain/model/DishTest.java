@@ -18,7 +18,7 @@ class DishTest {
         dish.setId(1L);
         dish.setName("Dish");
         dish.setDescription("Dish New");
-        dish.setIdCategory(1);
+        dish.setIdCategory(1L);
         dish.setActive(true);
         dish.setPrice(10);
         dish.setIdRestaurant(1);
@@ -36,7 +36,7 @@ class DishTest {
 
     @Test
     void testAllArgsConstructor() {
-        dish = new Dish(1L, "Burger", 3, "Beef Burger", 2000, "http://image.com/burger.png", 7, false);
+        dish = new Dish(1L, "Burger", 3L, "Beef Burger", 2000, "http://image.com/burger.png", 7, false);
 
         assertEquals(1L, dish.getId());
         assertEquals("Burger", dish.getName());

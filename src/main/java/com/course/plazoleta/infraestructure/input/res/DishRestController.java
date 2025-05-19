@@ -1,6 +1,7 @@
 package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
+import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
@@ -58,6 +59,18 @@ public class DishRestController {
     @GetMapping()
     public ResponseEntity<List<DishResponse>> getAllDishes(){
         return ResponseEntity.ok(dishHandler.getAllDishes());
+    }
+
+
+    @Operation(summary = "Update dish")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Modified dish", content = @Content),
+            @ApiResponse(responseCode = "409", description = "The dish does not exist", content = @Content)
+    })
+    @PutMapping("update")
+    public ResponseEntity<Void> updateDish(@Valid @RequestBody DishUpdateRequest dishUpdateRequest){
+        dishHandler.updateDish(dishUpdateRequest);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

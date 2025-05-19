@@ -21,7 +21,7 @@ class DishUpdateRequestTest {
     }
     private DishUpdateRequest buildValidDishUpdateRequest() {
         DishUpdateRequest request = new DishUpdateRequest();
-
+        request.setId(1);
         request.setPrice(50);
         request.setDescription("Delicious cheese pizza");
 
@@ -30,7 +30,7 @@ class DishUpdateRequestTest {
     @Test
     void testValidDishUpdateRequest() {
         DishUpdateRequest request = new DishUpdateRequest();
-       
+        request.setId(1);
         request.setPrice(100);
         request.setDescription("Juicy beef burger");
      

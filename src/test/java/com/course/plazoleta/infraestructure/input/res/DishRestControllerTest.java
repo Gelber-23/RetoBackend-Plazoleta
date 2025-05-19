@@ -1,6 +1,7 @@
 package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
+import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
 import com.course.plazoleta.application.mapper.response.IDishResponseMapper;
@@ -41,7 +42,7 @@ class DishRestControllerTest {
         dish.setId(1L);
         dish.setName("Dish");
         dish.setDescription("Dish New");
-        dish.setIdCategory(1);
+        dish.setIdCategory(1L);
         dish.setActive(true);
         dish.setPrice(10);
         dish.setIdRestaurant(1);
@@ -91,5 +92,20 @@ class DishRestControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(1, Objects.requireNonNull(response.getBody()).size());
         verify(dishHandler).getAllDishes();
+    }
+
+    @Test
+    void shouldUpdateDishSuccessfully() {
+        DishUpdateRequest updateRequest = new DishUpdateRequest();
+
+        updateRequest.setDescription("Updated Description");
+
+        updateRequest.setPrice(20);
+
+
+        ResponseEntity<Void> response = dishRestController.updateDish(updateRequest);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(dishHandler).updateDish(updateRequest);
     }
 }
