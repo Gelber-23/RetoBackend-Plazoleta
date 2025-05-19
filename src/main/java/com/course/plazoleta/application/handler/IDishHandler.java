@@ -1,7 +1,9 @@
 package com.course.plazoleta.application.handler;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
+import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
+import com.course.plazoleta.domain.model.Dish;
 
 import java.util.List;
 
@@ -12,4 +14,5 @@ public interface IDishHandler {
 
     List<DishResponse> getAllDishes();
 
+    void  updateDish(DishUpdateRequest dish);
 }

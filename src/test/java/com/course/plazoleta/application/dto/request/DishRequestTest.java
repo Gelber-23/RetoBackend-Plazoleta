@@ -28,7 +28,7 @@ class DishRequestTest {
         request.setDescription("Juicy beef burger");
         request.setUrlImage("https://example.com/image.jpg");
         request.setIdCategory(1);
-
+        request.setIdRestaurant(1);
         Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty(), "There should be no violations for a valid request");
     }
@@ -107,6 +107,7 @@ class DishRequestTest {
         request.setDescription("Delicious cheese pizza");
         request.setUrlImage("https://example.com/pizza.jpg");
         request.setIdCategory(2);
+        request.setIdRestaurant(1);
         return request;
     }
 }

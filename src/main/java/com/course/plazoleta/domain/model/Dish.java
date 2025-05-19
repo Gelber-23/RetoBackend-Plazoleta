@@ -5,7 +5,7 @@ public class Dish {
 
     private Long id;
     private String name;
-    private int idCategory;
+    private Long idCategory;
     private String description;
     private int price;
     private String urlImage;
@@ -15,7 +15,7 @@ public class Dish {
     public Dish() {
     }
 
-    public Dish(Long id, String name, int idCategory, String description, int price, String urlImage, int idRestaurant, Boolean active) {
+    public Dish(Long id, String name, Long idCategory, String description, int price, String urlImage, int idRestaurant, Boolean active) {
         this.id = id;
         this.name = name;
         this.idCategory = idCategory;
@@ -42,11 +42,11 @@ public class Dish {
         this.name = name;
     }
 
-    public int getIdCategory() {
+    public Long getIdCategory() {
         return idCategory;
     }
 
-    public void setIdCategory(int idCategory) {
+    public void setIdCategory(Long idCategory) {
         this.idCategory = idCategory;
     }
 

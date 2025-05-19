@@ -1,8 +1,10 @@
 package com.course.plazoleta.application.handler.impl;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
+import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.mapper.request.IDishRequestMapper;
+import com.course.plazoleta.application.mapper.request.IDishUpdateRequestMapper;
 import com.course.plazoleta.application.mapper.response.IDishResponseMapper;
 import com.course.plazoleta.domain.api.IDishServicePort;
 import com.course.plazoleta.domain.model.Dish;
@@ -26,6 +28,8 @@ class DishHandlerTest {
     IDishServicePort dishServicePort;
     @Mock
     IDishRequestMapper dishRequestMapper;
+    @Mock
+    IDishUpdateRequestMapper dishUpdateRequestMapper;
     @Mock
     IDishResponseMapper dishResponseMapper;
     @InjectMocks
@@ -72,5 +76,16 @@ class DishHandlerTest {
         assertEquals(dishResponseList, result);
         verify(dishServicePort).getAllDishes();
         verify(dishResponseMapper).toResponseList(domains);
+    }
+    @Test
+    void updateDish_delegatesToService() {
+        Dish dish = new Dish();
+        DishUpdateRequest updateRequest = new DishUpdateRequest();
+        when(dishUpdateRequestMapper.toDish(updateRequest)).thenReturn(dish);
+
+        dishHandler.updateDish(updateRequest);
+
+        verify(dishUpdateRequestMapper).toDish(updateRequest);
+        verify(dishServicePort).updateDish(dish);
     }
 }

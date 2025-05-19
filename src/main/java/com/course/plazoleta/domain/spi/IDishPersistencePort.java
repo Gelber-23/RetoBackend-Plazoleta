@@ -10,5 +10,5 @@ public interface IDishPersistencePort {
     Dish getDishById(Long id);
 
     List<Dish> getAllDishes();
-
+    void  updateDish(Dish dish);
 }

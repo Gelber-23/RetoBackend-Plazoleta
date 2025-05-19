@@ -35,4 +35,13 @@ public class DishJpaAdapter  implements IDishPersistencePort {
         }
         return dishEntityMapper.toModelList(dishEntityList);
     }
+
+    @Override
+    public void updateDish(Dish dish) {
+        DishEntity newDish = dishRepository.findById(dish.getId()).orElseThrow(() -> new RuntimeException("Dish not found: " + dish.getId()));
+        newDish.setPrice(dish.getPrice());
+        newDish.setDescription(dish.getDescription());
+
+        dishRepository.save(newDish);
+    }
 }
