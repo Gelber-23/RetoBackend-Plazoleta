@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DishRestController {
     private final IDishHandler dishHandler;
-
+    private static final String ROLE_OWNER      = "hasRole('2')";
 
     @Operation(summary = "Add a new dish")
     @ApiResponses(value = {
@@ -34,6 +35,7 @@ public class DishRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @PostMapping()
+    @PreAuthorize(ROLE_OWNER)
     public ResponseEntity<Void> saveDish (@Valid @RequestBody DishRequest dishRequest) {
         dishHandler.saveDish(dishRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -45,6 +47,7 @@ public class DishRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @GetMapping("{id}")
+    @PreAuthorize(ROLE_OWNER)
     public ResponseEntity<DishResponse> getDishById(@PathVariable(value = "id") Long id) {
         return  ResponseEntity.ok(dishHandler.getDishById(id));
     }
@@ -57,6 +60,7 @@ public class DishRestController {
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping()
+    @PreAuthorize(ROLE_OWNER)
     public ResponseEntity<List<DishResponse>> getAllDishes(){
         return ResponseEntity.ok(dishHandler.getAllDishes());
     }
@@ -68,6 +72,7 @@ public class DishRestController {
             @ApiResponse(responseCode = "409", description = "The dish does not exist", content = @Content)
     })
     @PutMapping("update")
+    @PreAuthorize(ROLE_OWNER)
     public ResponseEntity<Void> updateDish(@Valid @RequestBody DishUpdateRequest dishUpdateRequest){
         dishHandler.updateDish(dishUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
