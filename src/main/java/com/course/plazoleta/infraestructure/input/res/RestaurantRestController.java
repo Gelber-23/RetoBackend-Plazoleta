@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RestaurantRestController {
 
+    private static final String ROLE_ADMIN     = "hasRole('1')";
+    private static final String ROLES_ADMIN_OWNER = "hasAnyRole('1','2')";
     private final IRestaurantHandler restaurantHandler;
 
 
@@ -33,6 +36,7 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @PostMapping()
+    @PreAuthorize(ROLE_ADMIN)
     public ResponseEntity<Void> saveRestaurant (@Valid @RequestBody RestaurantRequest restaurantRequest) {
         restaurantHandler.saveRestaurant(restaurantRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -44,6 +48,7 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @GetMapping("{id}")
+    @PreAuthorize(ROLES_ADMIN_OWNER)
     public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable(value = "id") int id) {
         return  ResponseEntity.ok(restaurantHandler.getRestaurantById(id));
     }
@@ -56,6 +61,7 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping()
+    @PreAuthorize(ROLES_ADMIN_OWNER)
     public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(){
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
     }
@@ -68,6 +74,7 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "404", description = "Restaurant not found", content = @Content)
     })
     @DeleteMapping("{id}")
+    @PreAuthorize(ROLE_ADMIN)
     public ResponseEntity<Void> deleteRestaurantById(@PathVariable(value = "id")int id){
         restaurantHandler.deleteRestaurantById(id);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -17,6 +17,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryRestController {
     private final ICategoryHandler categoryHandler;
-
+    private static final String ROLES_ADMIN_OWNER = "hasAnyRole('1','2')";
 
     @Operation(summary = "Add a new category")
     @ApiResponses(value = {
@@ -35,6 +36,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @PostMapping()
+    @PreAuthorize(ROLES_ADMIN_OWNER)
     public ResponseEntity<Void> saveCategory (@Valid @RequestBody CategoryRequest categoryRequest) {
         categoryHandler.saveCategory(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -46,6 +48,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
     })
     @GetMapping("{id}")
+    @PreAuthorize(ROLES_ADMIN_OWNER)
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable(value = "id") Long id) {
         return  ResponseEntity.ok(categoryHandler.getCategoryById(id));
     }
@@ -58,6 +61,7 @@ public class CategoryRestController {
             @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
     })
     @GetMapping()
+    @PreAuthorize(ROLES_ADMIN_OWNER)
     public ResponseEntity<List<CategoryResponse>> getAllCategories(){
         return ResponseEntity.ok(categoryHandler.getAllCategories());
     }
