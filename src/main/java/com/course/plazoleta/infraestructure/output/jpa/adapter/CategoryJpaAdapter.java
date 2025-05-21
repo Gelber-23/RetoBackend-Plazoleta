@@ -22,7 +22,7 @@ public class CategoryJpaAdapter implements ICategoryPersistencePort {
     }
 
     @Override
-    public Category getCategoryById(Long id) {
+    public Category getCategoryById(long id) {
         return categoryEntityMapper.toModel(categoryRepository.findById(id)
                 .orElseThrow(NoDataFoundException::new));
     }

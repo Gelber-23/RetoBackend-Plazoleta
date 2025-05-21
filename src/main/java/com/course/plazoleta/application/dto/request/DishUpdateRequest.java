@@ -12,7 +12,7 @@ public class DishUpdateRequest {
 
     @NotNull(message = "Id is required")
     @Min(value = 1, message = "The ID cannot be negative or 0")
-    private Integer  id;
+    private long  id;
 
     @NotBlank(message = "Description is required")
     private String description;

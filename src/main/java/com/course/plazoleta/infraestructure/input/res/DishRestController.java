@@ -48,7 +48,7 @@ public class DishRestController {
     })
     @GetMapping("{id}")
     @PreAuthorize(ROLE_OWNER)
-    public ResponseEntity<DishResponse> getDishById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<DishResponse> getDishById(@PathVariable(value = "id") long id) {
         return  ResponseEntity.ok(dishHandler.getDishById(id));
     }
 

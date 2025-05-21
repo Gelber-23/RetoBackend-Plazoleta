@@ -49,7 +49,7 @@ public class CategoryRestController {
     })
     @GetMapping("{id}")
     @PreAuthorize(ROLES_ADMIN_OWNER)
-    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable(value = "id") Long id) {
+    public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable(value = "id") long id) {
         return  ResponseEntity.ok(categoryHandler.getCategoryById(id));
     }
 

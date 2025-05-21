@@ -20,7 +20,7 @@ public class DishUseCase implements IDishServicePort{
     }
 
     @Override
-    public Dish getDishById(Long id) {
+    public Dish getDishById(long id) {
         return dishPersistencePort.getDishById(id);
     }
 

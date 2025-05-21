@@ -32,13 +32,13 @@ class DishResponseTest {
     void testNullValues() {
         DishResponse response = new DishResponse();
 
-        response.setId(null);
+
         response.setName(null);
         response.setDescription(null);
         response.setUrlImage(null);
         response.setActive(null);
 
-        assertNull(response.getId());
+
         assertNull(response.getName());
         assertNull(response.getDescription());
         assertNull(response.getUrlImage());

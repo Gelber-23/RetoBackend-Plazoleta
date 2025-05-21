@@ -32,7 +32,7 @@ public class DishHandler implements IDishHandler {
     }
 
     @Override
-    public DishResponse getDishById(Long id) {
+    public DishResponse getDishById(long id) {
         Dish dish = dishServicePort.getDishById(id);
         return dishResponseMapper.toResponse(dish);
     }

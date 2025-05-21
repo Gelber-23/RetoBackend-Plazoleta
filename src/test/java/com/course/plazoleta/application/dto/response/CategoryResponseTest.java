@@ -22,11 +22,10 @@ class CategoryResponseTest {
     void testNullValues() {
         CategoryResponse response = new CategoryResponse();
 
-        response.setId(null);
+
         response.setName(null);
         response.setDescription(null);
 
-        assertNull(response.getId());
         assertNull(response.getName());
         assertNull(response.getDescription());
     }

@@ -22,7 +22,7 @@ public class DishJpaAdapter  implements IDishPersistencePort {
     }
 
     @Override
-    public Dish getDishById(Long id) {
+    public Dish getDishById(long id) {
         return dishEntityMapper.toModel(dishRepository.findById(id)
                 .orElseThrow(NoDataFoundException::new));
     }

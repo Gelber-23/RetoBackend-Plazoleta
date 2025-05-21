@@ -21,7 +21,7 @@ public class RestaurantRequest {
 
     @NotNull(message = "ID Owner is required")
     @Min(value = 1, message = "The owner id cannot be negative or 0")
-    private int id_owner;
+    private long id_owner;
 
     @NotBlank(message = "Phone is required")
     @Size(max = 13, message = "Phone number must be at most 13 characters long")

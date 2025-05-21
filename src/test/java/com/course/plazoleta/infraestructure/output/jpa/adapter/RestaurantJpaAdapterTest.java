@@ -44,7 +44,7 @@ class RestaurantJpaAdapterTest {
 
     @Test
     void getRestaurantById_shouldReturnMappedRestaurant() {
-        int id = 1;
+        long id = 1;
         RestaurantEntity entity = new RestaurantEntity();
         Restaurant model = new Restaurant();
 
@@ -58,7 +58,7 @@ class RestaurantJpaAdapterTest {
 
     @Test
     void getRestaurantById_shouldThrowWhenNotFound() {
-        int id = 99;
+        long id = 99;
         when(restaurantRepository.findById(id)).thenReturn(Optional.empty());
 
         assertThrows(NoDataFoundException.class, () -> restaurantJpaAdapter.getRestaurantById(id));
@@ -86,7 +86,7 @@ class RestaurantJpaAdapterTest {
 
     @Test
     void deleteRestaurantById_shouldCallRepository() {
-        int id = 10;
+        long id = 10;
         restaurantJpaAdapter.deleteRestaurantById(id);
 
         verify(restaurantRepository).deleteById(id);

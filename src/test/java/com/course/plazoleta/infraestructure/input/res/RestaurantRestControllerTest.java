@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,10 +39,10 @@ class RestaurantRestControllerTest {
     void setUp() {
 
         restaurant = new Restaurant();
-        restaurant.setId(1);
+        restaurant.setId(1L);
         restaurant.setName("Restaurant");
         restaurant.setAddress("Address");
-        restaurant.setId_owner(100);
+        restaurant.setId_owner(100L);
         restaurant.setPhone("+1234567890");
         restaurant.setUrlLogo("https://logo.com/logo.png");
         restaurant.setNit("123456789");
@@ -87,7 +88,7 @@ class RestaurantRestControllerTest {
         ResponseEntity<List<RestaurantResponse>> response = restaurantRestController.getAllRestaurants();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, response.getBody().size());
+        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
         verify(restaurantHandler).getAllRestaurants();
     }
 

@@ -19,7 +19,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public Restaurant getRestaurantById(int id) {
+    public Restaurant getRestaurantById(long id) {
         return restaurantPersistencePort.getRestaurantById(id);
     }
 
@@ -29,7 +29,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public void deleteRestaurantById(int id) {
+    public void deleteRestaurantById(long id) {
         restaurantPersistencePort.deleteRestaurantById(id);
     }
 }

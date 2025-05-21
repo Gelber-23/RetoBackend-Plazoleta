@@ -29,9 +29,9 @@ public class DishRequest {
 
     @NotNull(message = "Category is required")
     @Min(value = 1, message = "The category cannot be negative or 0")
-    private Integer idCategory;
+    private long idCategory;
 
     @NotNull(message = "ID Restaurant is required")
     @Min(value = 1, message = "The ID restaurant cannot be negative or 0")
-    private Integer idRestaurant;
+    private long idRestaurant;
 }

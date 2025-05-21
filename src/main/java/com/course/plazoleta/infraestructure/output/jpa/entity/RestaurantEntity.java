@@ -19,7 +19,7 @@ public class RestaurantEntity {
     private long id;
     private String name;
     private String address;
-    private int id_owner;
+    private long id_owner;
     private String phone;
     private String urlLogo;
     private String  nit;

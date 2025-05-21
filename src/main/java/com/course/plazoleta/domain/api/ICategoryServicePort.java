@@ -9,7 +9,7 @@ import java.util.List;
 public interface ICategoryServicePort {
     void saveCategory(Category category);
 
-    Category getCategoryById(Long id);
+    Category getCategoryById(long id);
 
     List<Category> getAllCategories();
 }

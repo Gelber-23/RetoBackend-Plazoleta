@@ -28,7 +28,7 @@ class RestaurantUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        restaurant = new Restaurant(1, "Restaurant", "Address", 100, "+1234567890", "https://logo.com/logo.png", "123456789");
+        restaurant = new Restaurant(1L, "Restaurant", "Address", 100L, "+1234567890", "https://logo.com/logo.png", "123456789");
     }
 
     @Test
@@ -63,7 +63,7 @@ class RestaurantUseCaseTest {
 
     @Test
     void shouldDeleteRestaurantById() {
-        int id = 1;
+        long id = 1;
 
         restaurantUseCase.deleteRestaurantById(id);
 

@@ -26,7 +26,7 @@ class RestaurantRequestTest {
         RestaurantRequest request = new RestaurantRequest();
         request.setName("Good Food");
         request.setAddress("123 Main Street");
-        request.setId_owner(1);
+        request.setId_owner(1L);
         request.setPhone("+12345678901");
         request.setUrlLogo("https://example.com/logo.png");
         request.setNit("123456789");
@@ -69,7 +69,7 @@ class RestaurantRequestTest {
     @Test
     void shouldFailWhenIdOwnerIsZero() {
         RestaurantRequest request = createValidRequest();
-        request.setId_owner(0);
+        request.setId_owner(0L);
 
         Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
 
@@ -110,7 +110,7 @@ class RestaurantRequestTest {
         RestaurantRequest request = new RestaurantRequest();
         request.setName("Good Food");
         request.setAddress("123 Main Street");
-        request.setId_owner(1);
+        request.setId_owner(1L);
         request.setPhone("+12345678901");
         request.setUrlLogo("https://example.com/logo.png");
         request.setNit("123456789");

@@ -49,7 +49,7 @@ public class RestaurantRestController {
     })
     @GetMapping("{id}")
     @PreAuthorize(ROLES_ADMIN_OWNER)
-    public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable(value = "id") int id) {
+    public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable(value = "id") long id) {
         return  ResponseEntity.ok(restaurantHandler.getRestaurantById(id));
     }
 
@@ -75,7 +75,7 @@ public class RestaurantRestController {
     })
     @DeleteMapping("{id}")
     @PreAuthorize(ROLE_ADMIN)
-    public ResponseEntity<Void> deleteRestaurantById(@PathVariable(value = "id")int id){
+    public ResponseEntity<Void> deleteRestaurantById(@PathVariable(value = "id")long id){
         restaurantHandler.deleteRestaurantById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

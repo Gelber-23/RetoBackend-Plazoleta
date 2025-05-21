@@ -1,13 +1,11 @@
 package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.CategoryRequest;
-import com.course.plazoleta.application.dto.request.DishRequest;
 import com.course.plazoleta.application.dto.response.CategoryResponse;
-import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.handler.ICategoryHandler;
 import com.course.plazoleta.application.mapper.response.ICategoryResponseMapper;
 import com.course.plazoleta.domain.model.Category;
-import com.course.plazoleta.domain.model.Dish;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -17,7 +17,7 @@ public class DishEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column( nullable = false)
-    private Long id;
+    private long id;
     private String name;
     @ManyToOne
     @JoinColumn(name = "idCategory", nullable = false)
@@ -25,6 +25,6 @@ public class DishEntity {
     private String description;
     private int price;
     private String urlImage;
-    private int idRestaurant;
+    private long idRestaurant;
     private Boolean active;
 }
