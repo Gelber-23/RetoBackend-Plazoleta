@@ -25,6 +25,8 @@ public class DishEntity {
     private String description;
     private int price;
     private String urlImage;
-    private long idRestaurant;
+    @ManyToOne
+    @JoinColumn(name = "idRestaurant", nullable = false)
+    private RestaurantEntity idRestaurant;
     private Boolean active;
 }

@@ -7,8 +7,9 @@ import java.util.List;
 public interface IDishPersistencePort {
     void saveDish(Dish dish);
 
-    Dish getDishById(long id);
+    Dish getDishById(Long id);
 
     List<Dish> getAllDishes();
     void  updateDish(Dish dish);
+    void  changeStateDish(Dish dish);
 }

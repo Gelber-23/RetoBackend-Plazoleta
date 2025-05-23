@@ -2,7 +2,7 @@ package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.model.Category;
 import com.course.plazoleta.domain.spi.ICategoryPersistencePort;
-import com.course.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.infraestructure.output.jpa.entity.CategoryEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.ICategoryEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.ICategoryRepository;

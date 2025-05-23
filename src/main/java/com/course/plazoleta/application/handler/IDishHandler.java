@@ -10,9 +10,11 @@ import java.util.List;
 public interface IDishHandler {
     void saveDish(DishRequest dishRequest);
 
-    DishResponse getDishById(long id);
+    DishResponse getDishById(Long id);
 
     List<DishResponse> getAllDishes();
 
     void  updateDish(DishUpdateRequest dish);
+
+    void  changeStateDish(Dish id);
 }

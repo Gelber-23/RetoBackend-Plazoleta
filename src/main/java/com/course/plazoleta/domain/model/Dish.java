@@ -3,7 +3,7 @@ package com.course.plazoleta.domain.model;
 public class Dish {
 
 
-    private long id;
+    private Long  id;
     private String name;
     private long idCategory;
     private String description;
@@ -15,7 +15,7 @@ public class Dish {
     public Dish() {
     }
 
-    public Dish(Long id, String name, Long idCategory, String description, int price, String urlImage, Long idRestaurant, Boolean active) {
+    public Dish(Long  id, String name, Long idCategory, String description, int price, String urlImage, Long idRestaurant, Boolean active) {
         this.id = id;
         this.name = name;
         this.idCategory = idCategory;
@@ -26,11 +26,11 @@ public class Dish {
         this.active = active;
     }
 
-    public long getId() {
+    public Long  getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long  id) {
         this.id = id;
     }
 

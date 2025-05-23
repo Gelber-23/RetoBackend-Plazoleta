@@ -9,12 +9,12 @@ import java.util.List;
 public interface IDishServicePort {
     void saveDish(Dish dish);
 
-    Dish getDishById(long id);
+    Dish getDishById(Long  id);
 
     List<Dish> getAllDishes();
 
     void  updateDish(Dish dish);
 
-   // void  updateStateDish(long id);
+    void  changeStateDish(Dish id);
 
 }

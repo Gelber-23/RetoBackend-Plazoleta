@@ -2,7 +2,7 @@ package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.model.Dish;
 import com.course.plazoleta.domain.spi.IDishPersistencePort;
-import com.course.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.infraestructure.output.jpa.entity.DishEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.IDishEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
@@ -17,12 +17,11 @@ public class DishJpaAdapter  implements IDishPersistencePort {
 
     @Override
     public void saveDish(Dish dish) {
-        dish.setActive(true);
         dishRepository.save(dishEntityMapper.toEntity(dish));
     }
 
     @Override
-    public Dish getDishById(long id) {
+    public Dish getDishById(Long id) {
         return dishEntityMapper.toModel(dishRepository.findById(id)
                 .orElseThrow(NoDataFoundException::new));
     }
@@ -38,10 +37,11 @@ public class DishJpaAdapter  implements IDishPersistencePort {
 
     @Override
     public void updateDish(Dish dish) {
-        DishEntity newDish = dishRepository.findById(dish.getId()).orElseThrow(() -> new RuntimeException("Dish not found: " + dish.getId()));
-        newDish.setPrice(dish.getPrice());
-        newDish.setDescription(dish.getDescription());
+        dishRepository.save(dishEntityMapper.toEntity(dish));
+    }
 
-        dishRepository.save(newDish);
+    @Override
+    public void changeStateDish(Dish dish) {
+        dishRepository.save(dishEntityMapper.toEntity(dish));
     }
 }

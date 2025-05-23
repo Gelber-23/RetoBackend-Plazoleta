@@ -6,6 +6,7 @@ import com.course.plazoleta.application.dto.response.CategoryResponse;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.ICategoryHandler;
+import com.course.plazoleta.domain.utils.constants.OpenApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,44 +25,44 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/category/")
-@Tag(name = "Category", description = "Endpoints for categories")
+@Tag(name = OpenApiConstants.TITLE_CATEGORY_REST, description = OpenApiConstants.TITLE_DESCRIPTION_CATEGORY_REST)
 @RequiredArgsConstructor
 public class CategoryRestController {
     private final ICategoryHandler categoryHandler;
     private static final String ROLES_ADMIN_OWNER = "hasAnyRole('1','2')";
 
-    @Operation(summary = "Add a new category")
+    @Operation(summary = OpenApiConstants.NEW_CATEGORY_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Category created", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
+            @ApiResponse(responseCode = "201", description = OpenApiConstants.NEW_CATEGORY_CREATED_MESSAGE, content = @Content),
+            @ApiResponse(responseCode = "400", description = OpenApiConstants.VALIDATIONS_ERRORS_MESSAGE , content = @Content)
     })
     @PostMapping()
-    @PreAuthorize(ROLES_ADMIN_OWNER)
+    @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
     public ResponseEntity<Void> saveCategory (@Valid @RequestBody CategoryRequest categoryRequest) {
         categoryHandler.saveCategory(categoryRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Get category by ID")
+    @Operation(summary = OpenApiConstants.GET_CATEGORY_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Category found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_CATEGORY_MESSAGE, content = @Content),
+            @ApiResponse(responseCode = "400", description = OpenApiConstants.VALIDATIONS_ERRORS_MESSAGE, content = @Content)
     })
     @GetMapping("{id}")
-    @PreAuthorize(ROLES_ADMIN_OWNER)
+    @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
     public ResponseEntity<CategoryResponse> getCategoryById(@PathVariable(value = "id") long id) {
         return  ResponseEntity.ok(categoryHandler.getCategoryById(id));
     }
 
-    @Operation(summary = "Get all categories")
+    @Operation(summary = OpenApiConstants.GET_ALL_CATEGORY_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All categories returned",
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_ALL_CATEGORY_MESSAGE,
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
-            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE,  content = @Content)
     })
     @GetMapping()
-    @PreAuthorize(ROLES_ADMIN_OWNER)
+    @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
     public ResponseEntity<List<CategoryResponse>> getAllCategories(){
         return ResponseEntity.ok(categoryHandler.getAllCategories());
     }

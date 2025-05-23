@@ -1,7 +1,7 @@
 package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.model.Restaurant;
-import com.course.plazoleta.infraestructure.exception.NoDataFoundException;
+import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.infraestructure.output.jpa.entity.RestaurantEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.IRestaurantEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IRestaurantRepository;
