@@ -31,7 +31,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public RestaurantResponse getRestaurantById(int id) {
+    public RestaurantResponse getRestaurantById(long id) {
         Restaurant restaurant = restaurantServicePort.getRestaurantById(id);
         return restaurantResponseMapper.toResponse(restaurant);
 
@@ -43,7 +43,7 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public void deleteRestaurantById(int id) {
+    public void deleteRestaurantById(long id) {
         restaurantServicePort.deleteRestaurantById(id);
     }
 }

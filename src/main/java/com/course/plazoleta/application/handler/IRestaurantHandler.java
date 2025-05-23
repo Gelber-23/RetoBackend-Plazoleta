@@ -10,9 +10,9 @@ public interface IRestaurantHandler {
 
     void saveRestaurant(RestaurantRequest restaurantRequest);
 
-    RestaurantResponse getRestaurantById(int id);
+    RestaurantResponse getRestaurantById(long id);
 
     List<RestaurantResponse> getAllRestaurants();
 
-    void deleteRestaurantById(int id);
+    void deleteRestaurantById(long id);
 }

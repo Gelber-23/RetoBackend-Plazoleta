@@ -5,6 +5,8 @@ import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
+import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.utils.constants.OpenApiConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,66 +19,79 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/dish/")
-@Tag(name = "Dish", description = "Endpoints for dishes")
+@Tag(name = OpenApiConstants.TITLE_DISH_REST, description = OpenApiConstants.TITLE_DESCRIPTION_DISH_REST)
 @RequiredArgsConstructor
 public class DishRestController {
     private final IDishHandler dishHandler;
-    private static final String ROLE_OWNER      = "hasRole('2')";
 
-    @Operation(summary = "Add a new dish")
+    @Operation(summary = OpenApiConstants.NEW_DISH_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Dish created", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
+            @ApiResponse(responseCode = "201", description = OpenApiConstants.NEW_DISH_CREATED_MESSAGE, content = @Content),
+            @ApiResponse(responseCode = "400", description = OpenApiConstants.VALIDATIONS_ERRORS_MESSAGE, content = @Content)
     })
     @PostMapping()
-    @PreAuthorize(ROLE_OWNER)
-    public ResponseEntity<Void> saveDish (@Valid @RequestBody DishRequest dishRequest) {
+    @PreAuthorize("@permissionService.isOwnerOfRestaurant(authentication, #dishRequest.idRestaurant)")
+    public ResponseEntity<Void> saveDish ( @RequestBody DishRequest dishRequest) {
         dishHandler.saveDish(dishRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @Operation(summary = "Get dish by ID")
+    @Operation(summary = OpenApiConstants.GET_DISH_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Dish found", content = @Content),
-            @ApiResponse(responseCode = "400", description = "Validation errors", content = @Content)
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_DISH_MESSAGE, content = @Content),
+            @ApiResponse(responseCode = "400", description = OpenApiConstants.VALIDATIONS_ERRORS_MESSAGE, content = @Content)
     })
     @GetMapping("{id}")
-    @PreAuthorize(ROLE_OWNER)
+    @PreAuthorize("@permissionService.isOwner(authentication)")
     public ResponseEntity<DishResponse> getDishById(@PathVariable(value = "id") Long id) {
         return  ResponseEntity.ok(dishHandler.getDishById(id));
     }
 
-    @Operation(summary = "Get all dishes")
+    @Operation(summary = OpenApiConstants.GET_ALL_DISH_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All dishes returned",
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_ALL_DISH_MESSAGE,
                     content = @Content(mediaType = "application/json",
                             array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
-            @ApiResponse(responseCode = "404", description = "No data found", content = @Content)
+            @ApiResponse(responseCode = "404", description =OpenApiConstants.NO_DATA_MESSAGE, content = @Content)
     })
     @GetMapping()
-    @PreAuthorize(ROLE_OWNER)
+    @PreAuthorize("@permissionService.isOwner(authentication)")
     public ResponseEntity<List<DishResponse>> getAllDishes(){
         return ResponseEntity.ok(dishHandler.getAllDishes());
     }
 
 
-    @Operation(summary = "Update dish")
+    @Operation(summary = OpenApiConstants.UPDATE_DISH_TITLE)
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Modified dish", content = @Content),
-            @ApiResponse(responseCode = "409", description = "The dish does not exist", content = @Content)
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.UPDATE_DISH_MESSAGE, content = @Content),
+            @ApiResponse(responseCode = "409", description = OpenApiConstants.UPDATE_NOT_EXIST_DISH_MESSAGE, content = @Content)
     })
     @PutMapping("update")
-    @PreAuthorize(ROLE_OWNER)
+    //@PreAuthorize("@permissionService.isOwnerOfDish(authentication,#dishUpdateRequest.id)")
     public ResponseEntity<Void> updateDish(@Valid @RequestBody DishUpdateRequest dishUpdateRequest){
         dishHandler.updateDish(dishUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Operation(summary = OpenApiConstants.CHANGE_STATE_DISH_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.CHANGE_STATE_DISH_MESSAGE, content = @Content),
+    })
+    @PutMapping("changeState/{id}")
+    @PreAuthorize("@permissionService.isOwnerOfDish(authentication, #id)")
+    public ResponseEntity<Void> changeStateDish(@PathVariable Dish id){
+
+        dishHandler.changeStateDish(id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
 
 }

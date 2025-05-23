@@ -15,4 +15,6 @@ public interface IDishHandler {
     List<DishResponse> getAllDishes();
 
     void  updateDish(DishUpdateRequest dish);
+
+    void  changeStateDish(Dish id);
 }

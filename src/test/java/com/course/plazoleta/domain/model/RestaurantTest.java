@@ -16,18 +16,18 @@ class RestaurantTest {
 
     @Test
     void testNoArgsConstructorAndSetters() {
-        restaurant.setId(1);
+        restaurant.setId(1L);
         restaurant.setName("Restaurant");
         restaurant.setAddress("Address");
-        restaurant.setId_owner(100);
+        restaurant.setId_owner(100L);
         restaurant.setPhone("+1234567890");
         restaurant.setUrlLogo("https://logo.com/logo.png");
         restaurant.setNit("123456789");
 
-        assertEquals(1, restaurant.getId());
+        assertEquals(1L, restaurant.getId());
         assertEquals("Restaurant", restaurant.getName());
         assertEquals("Address", restaurant.getAddress());
-        assertEquals(100, restaurant.getId_owner());
+        assertEquals(100L, restaurant.getId_owner());
         assertEquals("+1234567890", restaurant.getPhone());
         assertEquals("https://logo.com/logo.png", restaurant.getUrlLogo());
         assertEquals("123456789", restaurant.getNit());
@@ -35,12 +35,12 @@ class RestaurantTest {
 
     @Test
     void testAllArgsConstructor() {
-        Restaurant rest = new Restaurant(1, "Restaurant", "Address", 100, "+1234567890", "https://logo.com/logo.png", "123456789");
+        Restaurant rest = new Restaurant(1L, "Restaurant", "Address", 100L, "+1234567890", "https://logo.com/logo.png", "123456789");
 
-        assertEquals(1, rest.getId());
+        assertEquals(1L, rest.getId());
         assertEquals("Restaurant", rest.getName());
         assertEquals("Address", rest.getAddress());
-        assertEquals(100, rest.getId_owner());
+        assertEquals(100L, rest.getId_owner());
         assertEquals("+1234567890", rest.getPhone());
         assertEquals("https://logo.com/logo.png", rest.getUrlLogo());
         assertEquals("123456789", rest.getNit());

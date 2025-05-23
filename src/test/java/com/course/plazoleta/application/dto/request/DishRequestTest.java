@@ -27,8 +27,8 @@ class DishRequestTest {
         request.setPrice(100);
         request.setDescription("Juicy beef burger");
         request.setUrlImage("https://example.com/image.jpg");
-        request.setIdCategory(1);
-        request.setIdRestaurant(1);
+        request.setIdCategory(1L);
+        request.setIdRestaurant(1L);
         Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
         assertTrue(violations.isEmpty(), "There should be no violations for a valid request");
     }
@@ -82,14 +82,7 @@ class DishRequestTest {
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("urlImage")));
     }
 
-    @Test
-    void testNullCategory() {
-        DishRequest request = buildValidDishRequest();
-        request.setIdCategory(null);
 
-        Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-    }
 
     @Test
     void testNegativeCategory() {

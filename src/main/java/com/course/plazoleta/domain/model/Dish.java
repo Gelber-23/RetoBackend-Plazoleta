@@ -3,19 +3,19 @@ package com.course.plazoleta.domain.model;
 public class Dish {
 
 
-    private Long id;
+    private Long  id;
     private String name;
-    private Long idCategory;
+    private long idCategory;
     private String description;
     private int price;
     private String urlImage;
-    private int idRestaurant;
+    private long idRestaurant;
     private Boolean active;
 
     public Dish() {
     }
 
-    public Dish(Long id, String name, Long idCategory, String description, int price, String urlImage, int idRestaurant, Boolean active) {
+    public Dish(Long  id, String name, Long idCategory, String description, int price, String urlImage, Long idRestaurant, Boolean active) {
         this.id = id;
         this.name = name;
         this.idCategory = idCategory;
@@ -26,11 +26,11 @@ public class Dish {
         this.active = active;
     }
 
-    public Long getId() {
+    public Long  getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long  id) {
         this.id = id;
     }
 
@@ -42,11 +42,11 @@ public class Dish {
         this.name = name;
     }
 
-    public Long getIdCategory() {
+    public long getIdCategory() {
         return idCategory;
     }
 
-    public void setIdCategory(Long idCategory) {
+    public void setIdCategory(long idCategory) {
         this.idCategory = idCategory;
     }
 
@@ -74,11 +74,11 @@ public class Dish {
         this.urlImage = urlImage;
     }
 
-    public int getIdRestaurant() {
+    public long getIdRestaurant() {
         return idRestaurant;
     }
 
-    public void setIdRestaurant(int idRestaurant) {
+    public void setIdRestaurant(long idRestaurant) {
         this.idRestaurant = idRestaurant;
     }
 

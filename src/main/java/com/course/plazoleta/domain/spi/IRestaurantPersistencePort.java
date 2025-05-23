@@ -7,9 +7,9 @@ import java.util.List;
 public interface IRestaurantPersistencePort {
     void saveRestaurant(Restaurant restaurant);
 
-    Restaurant getRestaurantById(int id);
+    Restaurant getRestaurantById(long id);
 
     List<Restaurant> getAllRestaurants();
 
-    void deleteRestaurantById(int id);
+    void deleteRestaurantById(long id);
 }

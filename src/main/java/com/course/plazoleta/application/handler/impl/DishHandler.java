@@ -47,5 +47,10 @@ public class DishHandler implements IDishHandler {
         dishServicePort.updateDish(dishUpdateRequestMapper.toDish(dish));
     }
 
+    @Override
+    public void changeStateDish(Dish id) {
+        dishServicePort.changeStateDish(id);
+    }
+
 
 }

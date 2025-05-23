@@ -20,7 +20,7 @@ public class CategoryUseCase implements ICategoryServicePort {
     }
 
     @Override
-    public Category getCategoryById(Long id) {
+    public Category getCategoryById(long id) {
         return categoryPersistencePort.getCategoryById(id);
     }
 

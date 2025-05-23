@@ -9,6 +9,7 @@ import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.course.plazoleta.domain.usecase.CategoryUseCase;
 import com.course.plazoleta.domain.usecase.DishUseCase;
 import com.course.plazoleta.domain.usecase.RestaurantUseCase;
+import com.course.plazoleta.infraestructure.output.feing.UserClientFeignAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.CategoryJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.DishJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.RestaurantJpaAdapter;
@@ -18,6 +19,7 @@ import com.course.plazoleta.infraestructure.output.jpa.mapper.IRestaurantEntityM
 import com.course.plazoleta.infraestructure.output.jpa.repository.ICategoryRepository;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IRestaurantRepository;
+import com.course.plazoleta.infraestructure.utils.UtilsAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +30,14 @@ public class BeanConfiguration {
 
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
-
+    private final UserClientFeignAdapter userClientFeignAdapter;
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
 
     private final ICategoryRepository categoryRepository;
     private final ICategoryEntityMapper categoryEntityMapper;
+
+    private final UtilsAdapter utilsAdapter;
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
@@ -42,7 +46,7 @@ public class BeanConfiguration {
 
     @Bean
     public IRestaurantServicePort restaurantServicePort(){
-        return new RestaurantUseCase(restaurantPersistencePort());
+        return new RestaurantUseCase(restaurantPersistencePort(),userClientFeignAdapter);
     }
 
     @Bean
@@ -52,7 +56,7 @@ public class BeanConfiguration {
 
     @Bean
     public IDishServicePort dishServicePort(){
-        return new DishUseCase(dishPersistencePort());
+        return new DishUseCase(dishPersistencePort(),restaurantPersistencePort(),utilsAdapter);
     }
 
     @Bean

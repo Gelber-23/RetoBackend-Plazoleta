@@ -7,12 +7,12 @@ import lombok.Setter;
 @Setter
 public class DishResponse {
 
-    private Long id;
+    private long id;
     private String name;
-    private int idCategory;
+    private long idCategory;
     private String description;
     private int price;
     private String urlImage;
-    private int idRestaurant;
+    private long idRestaurant;
     private Boolean active;
 }

@@ -50,7 +50,7 @@ class RestaurantHandlerTest {
         restaurantRequest.setUrlLogo("https://logo.com");
         restaurantRequest.setNit("123456789");
 
-        restaurant = new Restaurant(1, "Restaurant", "Address", 1, "+1234567890", "https://logo.com", "123456789");
+        restaurant = new Restaurant(1l, "Restaurant", "Address", 1L, "+1234567890", "https://logo.com", "123456789");
 
         restaurantResponse = new RestaurantResponse();
         restaurantResponse.setName("Restaurant");

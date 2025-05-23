@@ -49,7 +49,7 @@ class DishHandlerTest {
 
     @Test
     void getDishById_returnsMappedResponse() {
-        Long id = 1L;
+        Dish id = 1L;
         Dish dish = new Dish();
         DishResponse resp = new DishResponse();
         when(dishServicePort.getDishById(id)).thenReturn(dish);

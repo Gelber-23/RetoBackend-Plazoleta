@@ -10,7 +10,7 @@ public interface ICategoryHandler {
 
     void saveCategory(CategoryRequest categoryRequest);
 
-    CategoryResponse getCategoryById(Long id);
+    CategoryResponse getCategoryById(long id);
 
     List<CategoryResponse> getAllCategories();
 }

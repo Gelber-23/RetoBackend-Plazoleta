@@ -13,8 +13,10 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE )
 public interface IDishEntityMapper {
     @Mapping(target = "idCategory.id", source = "idCategory")
+    @Mapping(target = "idRestaurant.id", source = "idRestaurant")
     DishEntity toEntity(Dish dish);
     @Mapping(target = "idCategory", source = "idCategory.id")
+    @Mapping(target = "idRestaurant", source = "idRestaurant.id")
     Dish toModel(DishEntity dishEntity);
 
     List<Dish> toModelList(List<DishEntity> dishEntities);

@@ -11,4 +11,5 @@ public interface IDishPersistencePort {
 
     List<Dish> getAllDishes();
     void  updateDish(Dish dish);
+    void  changeStateDish(Dish dish);
 }

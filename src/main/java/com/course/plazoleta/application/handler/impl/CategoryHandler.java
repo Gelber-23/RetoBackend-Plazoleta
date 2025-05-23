@@ -28,7 +28,7 @@ public class CategoryHandler implements ICategoryHandler {
     }
 
     @Override
-    public CategoryResponse getCategoryById(Long id) {
+    public CategoryResponse getCategoryById(long id) {
         Category category = categoryServicePort.getCategoryById(id);
         return categoryResponseMapper.toResponse(category);
     }
