@@ -61,7 +61,6 @@ public class RestaurantRestController {
             @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
     })
     @GetMapping()
-    @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
     public ResponseEntity<PageModel<RestaurantResponse>> getAllRestaurants(
     @RequestParam(name = "page", defaultValue = ValuesConstants.MIN_VALUE_PAGE_PAGINATION) int page,
     @RequestParam(name = "pageSize", defaultValue =  ValuesConstants.MIN_VALUE_PAGE_SIZE_PAGINATION) int pageSize,
@@ -69,6 +68,8 @@ public class RestaurantRestController {
     ) {
         return ResponseEntity.ok(restaurantHandler.getAllRestaurants(page,pageSize,field));
     }
+
+
 
 
 

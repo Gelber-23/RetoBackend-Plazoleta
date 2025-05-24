@@ -2,11 +2,14 @@ package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
 import com.course.plazoleta.application.dto.request.DishUpdateRequest;
+import com.course.plazoleta.application.dto.response.DishListResponse;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.utils.constants.OpenApiConstants;
+import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -57,7 +60,7 @@ public class DishRestController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_ALL_DISH_MESSAGE,
                     content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
+                            array = @ArraySchema(schema = @Schema(implementation = DishResponse.class)))),
             @ApiResponse(responseCode = "404", description =OpenApiConstants.NO_DATA_MESSAGE, content = @Content)
     })
     @GetMapping()
@@ -91,6 +94,21 @@ public class DishRestController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
+    @Operation(summary = OpenApiConstants.GET_ALL_DISH_BY_RESTAURANT_CATEGORY_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_ALL_DISH_BY_RESTAURANT_CATEGORY_MESSAGE,
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = DishListResponse.class)))),
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
+    })
+    @GetMapping("filter")
+    public ResponseEntity<PageModel<DishListResponse>> getAllDishesByRestaurantByCategory(
+            @RequestParam(name = "page", defaultValue = ValuesConstants.MIN_VALUE_PAGE_PAGINATION) int page,
+            @RequestParam(name = "pageSize", defaultValue =  ValuesConstants.MIN_VALUE_PAGE_SIZE_PAGINATION) int pageSize,
+            @RequestParam(name = "idRestaurant", defaultValue =  ValuesConstants.DEFAULT_FIELD_ID_RESTAURANT_PAGINATION) int idRestaurant,
+            @RequestParam(name = "idCategory", defaultValue =  ValuesConstants.DEFAULT_FIELD_ID_CATEGORY_PAGINATION) int idCategory
+    ) {
+        return ResponseEntity.ok(dishHandler.getAllDishesByRestaurantByCategory(page,pageSize,idRestaurant,idCategory));
+    }
 
 }

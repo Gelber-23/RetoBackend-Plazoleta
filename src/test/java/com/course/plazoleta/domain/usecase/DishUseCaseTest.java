@@ -5,6 +5,7 @@ import com.course.plazoleta.domain.exception.DishValidationException;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.domain.exception.UserIsNotOwnerValidationException;
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
 import com.course.plazoleta.domain.spi.IDishPersistencePort;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,7 +130,25 @@ class DishUseCaseTest {
         when(dishPersistencePort.getDishById(dish.getId())).thenReturn(null);
         assertThrows(NoDataFoundException.class, () -> dishUseCase.changeStateDish(dish));
     }
+    @Test
+    void getAllDishesByRestaurantByCategory_shouldReturnPageModel() {
+        int page = 0;
+        int pageSize = 10;
+        int idRestaurant = 1;
+        int idCategory = 2;
 
+        Dish dish = new Dish();
+        List<Dish> dishList = Collections.singletonList(dish);
+        PageModel<Dish> expectedPageModel = new PageModel<>(dishList, page, pageSize, 1L, 1);
+
+        when(dishPersistencePort.getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory))
+                .thenReturn(expectedPageModel);
+
+        PageModel<Dish> result = dishUseCase.getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory);
+
+        verify(dishPersistencePort).getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory);
+        assertEquals(expectedPageModel, result);
+    }
 
     private Dish createValidDish() {
         Dish d = new Dish();

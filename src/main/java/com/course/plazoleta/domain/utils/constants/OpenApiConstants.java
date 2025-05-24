@@ -41,6 +41,9 @@ public class OpenApiConstants {
     public static final String GET_ALL_DISH_TITLE = "Get all dishes";
     public static final String GET_ALL_DISH_MESSAGE = "All dishes returned";
 
+    public static final String GET_ALL_DISH_BY_RESTAURANT_CATEGORY_TITLE = "Get all dishes by restaurant and category";
+    public static final String GET_ALL_DISH_BY_RESTAURANT_CATEGORY_MESSAGE = "All dishes filtered returned";
+
     public static final String UPDATE_DISH_TITLE = "Update dish";
     public static final String UPDATE_DISH_MESSAGE = "Modified dish";
     public static final String UPDATE_NOT_EXIST_DISH_MESSAGE ="The dish does not exist";

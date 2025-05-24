@@ -6,6 +6,7 @@ import com.course.plazoleta.domain.exception.DishValidationException;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.domain.exception.UserIsNotOwnerValidationException;
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
 import com.course.plazoleta.domain.spi.IDishPersistencePort;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -44,6 +45,11 @@ public class DishUseCase implements IDishServicePort {
     @Override
     public List<Dish> getAllDishes() {
         return dishPersistencePort.getAllDishes();
+    }
+
+    @Override
+    public PageModel<Dish> getAllDishesByRestaurantByCategory(Integer page, Integer pageSize, Integer idRestaurant, Integer idCategory) {
+        return dishPersistencePort.getAllDishesByRestaurantByCategory(page,pageSize,idRestaurant,idCategory);
     }
 
     @Override

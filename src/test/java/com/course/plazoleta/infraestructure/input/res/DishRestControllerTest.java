@@ -2,9 +2,11 @@ package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.DishRequest;
 import com.course.plazoleta.application.dto.request.DishUpdateRequest;
+import com.course.plazoleta.application.dto.response.DishListResponse;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -70,5 +72,25 @@ class DishRestControllerTest {
         verify(dishHandler).changeStateDish(id);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
+    @Test
+    void getAllDishesByRestaurantByCategory_shouldReturnPageModel() {
+        int page = 0;
+        int pageSize = 10;
+        int idRestaurant = 1;
+        int idCategory = 2;
 
+        DishListResponse response = new DishListResponse();
+        List<DishListResponse> responseList = Collections.singletonList(response);
+        PageModel<DishListResponse> pageModel = new PageModel<>(responseList, page, pageSize, 1L, 1);
+
+        when(dishHandler.getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory))
+                .thenReturn(pageModel);
+
+        ResponseEntity<PageModel<DishListResponse>> result = dishRestController
+                .getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory);
+
+        verify(dishHandler).getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory);
+        assertEquals(HttpStatus.OK, result.getStatusCode());
+        assertEquals(pageModel, result.getBody());
+    }
 }
