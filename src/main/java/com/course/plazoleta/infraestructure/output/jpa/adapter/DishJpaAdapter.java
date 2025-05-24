@@ -1,12 +1,16 @@
 package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.spi.IDishPersistencePort;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.infraestructure.output.jpa.entity.DishEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.IDishEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -24,6 +28,30 @@ public class DishJpaAdapter  implements IDishPersistencePort {
     public Dish getDishById(Long id) {
         return dishEntityMapper.toModel(dishRepository.findById(id)
                 .orElseThrow(NoDataFoundException::new));
+    }
+
+    @Override
+    public PageModel<Dish> getAllDishesByRestaurantByCategory(Integer page, Integer pageSize, Integer idRestaurant, Integer idCategory) {
+        Pageable pageable = PageRequest.of(page, pageSize);
+
+        Page<DishEntity> pageResult = dishRepository.findByIdRestaurant_IdAndIdCategory_Id(
+                idRestaurant.longValue(),
+                idCategory.longValue(),
+                pageable
+        );
+
+        List<Dish> dishes = pageResult.getContent()
+                .stream()
+                .map(dishEntityMapper::toModel)
+                .toList();
+
+        return new PageModel<>(
+                dishes,
+                page,
+                pageSize,
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages()
+        );
     }
 
     @Override

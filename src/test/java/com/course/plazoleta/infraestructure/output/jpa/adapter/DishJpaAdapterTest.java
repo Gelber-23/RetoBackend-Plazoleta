@@ -2,6 +2,7 @@ package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.domain.model.Dish;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.infraestructure.output.jpa.entity.DishEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.IDishEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
@@ -10,6 +11,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.Collections;
 import java.util.List;
@@ -112,5 +116,37 @@ class DishJpaAdapterTest {
 
         verify(dishRepository).save(entity);
     }
+    @Test
+    void getAllDishesByRestaurantByCategory_shouldReturnPageModel() {
+        int page = 0;
+        int pageSize = 2;
+        int idRestaurant = 1;
+        int idCategory = 2;
 
+        DishEntity dishEntity = new DishEntity();
+        Dish dish = new Dish();
+        List<DishEntity> dishEntities = Collections.singletonList(dishEntity);
+        List<Dish> dishes = Collections.singletonList(dish);
+
+        Page<DishEntity> pageResult = new PageImpl<>(dishEntities, PageRequest.of(page, pageSize), dishEntities.size());
+
+        when(dishRepository.findByIdRestaurant_IdAndIdCategory_Id(
+                (long) idRestaurant,
+                (long) idCategory,
+                PageRequest.of(page, pageSize)
+        )).thenReturn(pageResult);
+
+        when(dishEntityMapper.toModel(dishEntity)).thenReturn(dish);
+
+        PageModel<Dish> result = dishJpaAdapter.getAllDishesByRestaurantByCategory(page, pageSize, idRestaurant, idCategory);
+
+        assertEquals(dishes, result.getContent());
+        assertEquals(page, result.getPage());
+        assertEquals(pageSize, result.getSize());
+        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+
+        verify(dishRepository).findByIdRestaurant_IdAndIdCategory_Id((long) idRestaurant, (long) idCategory, PageRequest.of(page, pageSize));
+        verify(dishEntityMapper).toModel(dishEntity);
+    }
 }

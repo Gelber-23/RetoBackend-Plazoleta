@@ -10,4 +10,7 @@ public class ValuesConstants {
     public static final String MIN_VALUE_PAGE_PAGINATION = "0";
     public static final String MIN_VALUE_PAGE_SIZE_PAGINATION = "10";
     public static final String DEFAULT_FIELD_ORDER_RESTAURANT_PAGINATION = "name";
+
+    public static final String DEFAULT_FIELD_ID_RESTAURANT_PAGINATION = "1";
+    public static final String DEFAULT_FIELD_ID_CATEGORY_PAGINATION = "1";
 }
