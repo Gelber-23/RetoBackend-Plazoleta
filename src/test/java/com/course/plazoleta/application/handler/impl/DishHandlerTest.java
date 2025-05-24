@@ -25,67 +25,77 @@ import static org.mockito.Mockito.when;
 class DishHandlerTest {
 
     @Mock
-    IDishServicePort dishServicePort;
-    @Mock
-    IDishRequestMapper dishRequestMapper;
-    @Mock
-    IDishUpdateRequestMapper dishUpdateRequestMapper;
-    @Mock
-    IDishResponseMapper dishResponseMapper;
+    private IDishServicePort dishServicePort;
+    @Mock private IDishRequestMapper dishRequestMapper;
+    @Mock private IDishUpdateRequestMapper dishUpdateRequestMapper;
+    @Mock private IDishResponseMapper dishResponseMapper;
     @InjectMocks
-    DishHandler dishHandler;
+    private DishHandler dishHandler;
+
+
 
     @Test
-    void saveDish_delegatesToService() {
-        DishRequest request = new DishRequest();
-        Dish dish = new Dish();
-        when(dishRequestMapper.toDish(request)).thenReturn(dish);
+    void saveDish_shouldCallServiceWithMappedDish() {
+        DishRequest dishRequest = new DishRequest();
+        Dish mappedDish = new Dish();
 
-        dishHandler.saveDish(request);
+        when(dishRequestMapper.toDish(dishRequest)).thenReturn(mappedDish);
 
-        verify(dishRequestMapper).toDish(request);
-        verify(dishServicePort).saveDish(dish);
+        dishHandler.saveDish(dishRequest);
+
+        verify(dishRequestMapper).toDish(dishRequest);
+        verify(dishServicePort).saveDish(mappedDish);
     }
 
     @Test
-    void getDishById_returnsMappedResponse() {
-        Dish id = 1L;
+    void getDishById_shouldReturnMappedResponse() {
+        long id = 1L;
         Dish dish = new Dish();
-        DishResponse resp = new DishResponse();
+        DishResponse response = new DishResponse();
+
         when(dishServicePort.getDishById(id)).thenReturn(dish);
-        when(dishResponseMapper.toResponse(dish)).thenReturn(resp);
+        when(dishResponseMapper.toResponse(dish)).thenReturn(response);
 
         DishResponse result = dishHandler.getDishById(id);
 
-        assertSame(resp, result);
+        assertEquals(response, result);
         verify(dishServicePort).getDishById(id);
         verify(dishResponseMapper).toResponse(dish);
     }
 
     @Test
-    void getAllDishes_returnsMappedList() {
-        Dish dish = new Dish();
-        DishResponse resp = new DishResponse();
-        List<Dish> domains = Collections.singletonList(dish);
-        List<DishResponse> dishResponseList = Collections.singletonList(resp);
-        when(dishServicePort.getAllDishes()).thenReturn(domains);
-        when(dishResponseMapper.toResponseList(domains)).thenReturn(dishResponseList);
+    void getAllDishes_shouldReturnMappedList() {
+        List<Dish> dishes = Collections.singletonList(new Dish());
+        List<DishResponse> responses = Collections.singletonList(new DishResponse());
+
+        when(dishServicePort.getAllDishes()).thenReturn(dishes);
+        when(dishResponseMapper.toResponseList(dishes)).thenReturn(responses);
 
         List<DishResponse> result = dishHandler.getAllDishes();
 
-        assertEquals(dishResponseList, result);
+        assertEquals(responses, result);
         verify(dishServicePort).getAllDishes();
-        verify(dishResponseMapper).toResponseList(domains);
+        verify(dishResponseMapper).toResponseList(dishes);
     }
+
     @Test
-    void updateDish_delegatesToService() {
-        Dish dish = new Dish();
+    void updateDish_shouldCallServiceWithMappedDish() {
         DishUpdateRequest updateRequest = new DishUpdateRequest();
-        when(dishUpdateRequestMapper.toDish(updateRequest)).thenReturn(dish);
+        Dish mappedDish = new Dish();
+
+        when(dishUpdateRequestMapper.toDish(updateRequest)).thenReturn(mappedDish);
 
         dishHandler.updateDish(updateRequest);
 
         verify(dishUpdateRequestMapper).toDish(updateRequest);
-        verify(dishServicePort).updateDish(dish);
+        verify(dishServicePort).updateDish(mappedDish);
     }
+
+    @Test
+    void changeStateDish_shouldCallService() {
+        Dish dish = new Dish();
+        dishHandler.changeStateDish(dish);
+        verify(dishServicePort).changeStateDish(dish);
+    }
+  
 }

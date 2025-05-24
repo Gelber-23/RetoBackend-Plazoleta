@@ -1,9 +1,11 @@
 package com.course.plazoleta.application.dto.request;
 
+import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,108 +14,60 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RestaurantRequestTest {
-
     private Validator validator;
 
     @BeforeEach
-    void setup() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    void setupValidator() {
+        ValidatorFactory factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory();
+
         validator = factory.getValidator();
     }
 
     @Test
-    void shouldPassValidationWithValidData() {
+    void validRestaurantRequest_shouldHaveNoViolations() {
         RestaurantRequest request = new RestaurantRequest();
-        request.setName("Good Food");
+        request.setName("Pepe Grill");
         request.setAddress("123 Main Street");
         request.setId_owner(1L);
-        request.setPhone("+12345678901");
+        request.setPhone("+123456789012");
         request.setUrlLogo("https://example.com/logo.png");
-        request.setNit("123456789");
+        request.setNit("123456");
 
         Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.isEmpty(), "Expected no validation errors");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
-    void shouldFailWhenNameIsBlank() {
-        RestaurantRequest request = createValidRequest();
-        request.setName("");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
-    }
-
-    @Test
-    void shouldFailWhenNameIsOnlyNumbers() {
-        RestaurantRequest request = createValidRequest();
-        request.setName("123456");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
-    }
-
-    @Test
-    void shouldFailWhenAddressIsBlank() {
-        RestaurantRequest request = createValidRequest();
-        request.setAddress("");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("address")));
-    }
-
-    @Test
-    void shouldFailWhenIdOwnerIsZero() {
-        RestaurantRequest request = createValidRequest();
-        request.setId_owner(0L);
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("id_owner")));
-    }
-
-    @Test
-    void shouldFailWhenPhoneIsInvalid() {
-        RestaurantRequest request = createValidRequest();
-        request.setPhone("++1234abc");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("phone")));
-    }
-
-    @Test
-    void shouldFailWhenUrlLogoIsInvalid() {
-        RestaurantRequest request = createValidRequest();
-        request.setUrlLogo("not_a_url");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("urlLogo")));
-    }
-
-    @Test
-    void shouldFailWhenNitIsNotNumeric() {
-        RestaurantRequest request = createValidRequest();
-        request.setNit("ABC123");
-
-        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
-
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("nit")));
-    }
-
-    private RestaurantRequest createValidRequest() {
+    void invalidRestaurantRequest_shouldReturnViolations() {
         RestaurantRequest request = new RestaurantRequest();
-        request.setName("Good Food");
+        request.setName("123456"); // solo números
+        request.setAddress(""); // en blanco
+        request.setId_owner(0); // menor que mínimo
+        request.setPhone("abc"); // formato inválido
+        request.setUrlLogo("invalid-url"); // formato de URL inválido
+        request.setNit("abc123"); // no solo números
+
+        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
+        assertEquals(6, violations.size());
+    }
+
+    @Test
+    void phoneTooLong_shouldFailValidation() {
+        RestaurantRequest request = new RestaurantRequest();
+        request.setName("Pepe Grill");
         request.setAddress("123 Main Street");
         request.setId_owner(1L);
-        request.setPhone("+12345678901");
+        request.setPhone("+123456789012345678"); // demasiado largo
         request.setUrlLogo("https://example.com/logo.png");
-        request.setNit("123456789");
-        return request;
+        request.setNit("123456");
+
+        Set<ConstraintViolation<RestaurantRequest>> violations = validator.validate(request);
+
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getMessage().equals(DtoConstants.FIELD_MUST_HAVE_13_CHARACTERS)));
     }
+
 }

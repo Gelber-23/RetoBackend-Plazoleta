@@ -5,105 +5,79 @@ import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.mapper.request.IRestaurantRequestMapper;
 import com.course.plazoleta.application.mapper.response.IRestaurantResponseMapper;
 import com.course.plazoleta.domain.api.IRestaurantServicePort;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @ExtendWith(MockitoExtension.class)
 class RestaurantHandlerTest {
-
-    @Mock
-    private IRestaurantServicePort restaurantServicePort;
-
-    @Mock
-    private IRestaurantRequestMapper restaurantRequestMapper;
-
+    @Mock private IRestaurantServicePort restaurantServicePort;
+    @Mock private IRestaurantRequestMapper restaurantRequestMapper;
     @Mock
     private IRestaurantResponseMapper restaurantResponseMapper;
-
     @InjectMocks
     private RestaurantHandler restaurantHandler;
 
-    private Restaurant restaurant;
-    private RestaurantRequest restaurantRequest;
-    private RestaurantResponse restaurantResponse;
 
-    @BeforeEach
-    void setUp() {
-        restaurantRequest = new RestaurantRequest();
-        restaurantRequest.setName("Restaurant");
-        restaurantRequest.setAddress("Address");
-        restaurantRequest.setId_owner(1);
-        restaurantRequest.setPhone("+1234567890");
-        restaurantRequest.setUrlLogo("https://logo.com");
-        restaurantRequest.setNit("123456789");
+    @Test
+    void saveRestaurant_callsServiceWithMappedObject() {
+        RestaurantRequest request = new RestaurantRequest();
+        Restaurant mappedRestaurant = new Restaurant();
 
-        restaurant = new Restaurant(1l, "Restaurant", "Address", 1L, "+1234567890", "https://logo.com", "123456789");
+        when(restaurantRequestMapper.toRestaurant(request)).thenReturn(mappedRestaurant);
 
-        restaurantResponse = new RestaurantResponse();
-        restaurantResponse.setName("Restaurant");
-        restaurantResponse.setUrlLogo("https://logo.com");
+        restaurantHandler.saveRestaurant(request);
+
+        verify(restaurantRequestMapper).toRestaurant(request);
+        verify(restaurantServicePort).saveRestaurant(mappedRestaurant);
     }
 
     @Test
-    void shouldSaveRestaurant() {
-        when(restaurantRequestMapper.toRestaurant(restaurantRequest)).thenReturn(restaurant);
-
-        restaurantHandler.saveRestaurant(restaurantRequest);
-
-        verify(restaurantRequestMapper).toRestaurant(restaurantRequest);
-        verify(restaurantServicePort).saveRestaurant(restaurant);
-    }
-
-    @Test
-    void shouldGetRestaurantById() {
-        int id = 1;
+    void getRestaurantById_returnsMappedResponse() {
+        long id = 1L;
+        Restaurant restaurant = new Restaurant();
+        RestaurantResponse expectedResponse = new RestaurantResponse();
 
         when(restaurantServicePort.getRestaurantById(id)).thenReturn(restaurant);
-        when(restaurantResponseMapper.toResponse(restaurant)).thenReturn(restaurantResponse);
+        when(restaurantResponseMapper.toResponse(restaurant)).thenReturn(expectedResponse);
 
         RestaurantResponse result = restaurantHandler.getRestaurantById(id);
 
-        assertNotNull(result);
-        assertEquals("Restaurant", result.getName());
+        assertEquals(expectedResponse, result);
         verify(restaurantServicePort).getRestaurantById(id);
         verify(restaurantResponseMapper).toResponse(restaurant);
     }
 
     @Test
-    void shouldGetAllRestaurants() {
-        List<Restaurant> restaurantList = Collections.singletonList(restaurant);
-        List<RestaurantResponse> responseList = Collections.singletonList(restaurantResponse);
+    void getAllRestaurants_returnsPageModelMapped() {
+        PageModel<Restaurant> restaurantPage = new PageModel<>(List.of(new Restaurant()), 0, 10, 1, 1);
+        PageModel<RestaurantResponse> responsePage = new PageModel<>(List.of(new RestaurantResponse()), 0, 10, 1, 1);
 
-        when(restaurantServicePort.getAllRestaurants()).thenReturn(restaurantList);
-        when(restaurantResponseMapper.toResponseList(restaurantList)).thenReturn(responseList);
+        when(restaurantServicePort.getAllRestaurants(0, 10, "name")).thenReturn(restaurantPage);
+        when(restaurantResponseMapper.toResponseList(restaurantPage)).thenReturn(responsePage);
 
-        List<RestaurantResponse> result = restaurantHandler.getAllRestaurants();
+        PageModel<RestaurantResponse> result = restaurantHandler.getAllRestaurants(0, 10, "name");
 
-        assertEquals(1, result.size());
-        assertEquals("Restaurant", result.get(0).getName());
-        verify(restaurantServicePort).getAllRestaurants();
-        verify(restaurantResponseMapper).toResponseList(restaurantList);
+        assertEquals(responsePage, result);
+        verify(restaurantServicePort).getAllRestaurants(0, 10, "name");
+        verify(restaurantResponseMapper).toResponseList(restaurantPage);
     }
 
     @Test
-    void shouldDeleteRestaurantById() {
-        int id = 1;
-
+    void deleteRestaurantById_callsService() {
+        long id = 5L;
         restaurantHandler.deleteRestaurantById(id);
-
         verify(restaurantServicePort).deleteRestaurantById(id);
     }
+
 }

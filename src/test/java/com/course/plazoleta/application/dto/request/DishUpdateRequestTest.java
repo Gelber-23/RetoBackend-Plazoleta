@@ -1,9 +1,11 @@
 package com.course.plazoleta.application.dto.request;
 
+import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,57 +17,52 @@ class DishUpdateRequestTest {
     private Validator validator;
 
     @BeforeEach
-    void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    void setupValidator() {
+        ValidatorFactory factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory();
+
         validator = factory.getValidator();
     }
-    private DishUpdateRequest buildValidDishUpdateRequest() {
+
+    @Test
+    void validDishUpdateRequest_shouldHaveNoViolations() {
         DishUpdateRequest request = new DishUpdateRequest();
         request.setId(1L);
-        request.setPrice(50);
-        request.setDescription("Delicious cheese pizza");
+        request.setDescription("Delicious chicken");
+        request.setPrice(10000);
 
-        return request;
+        Set<ConstraintViolation<DishUpdateRequest>> violations = validator.validate(request);
+        assertTrue(violations.isEmpty());
     }
+
     @Test
-    void testValidDishUpdateRequest() {
+    void invalidDishUpdateRequest_shouldReturnViolations() {
         DishUpdateRequest request = new DishUpdateRequest();
-        request.setId(1L);
-        request.setPrice(100);
-        request.setDescription("Juicy beef burger");
-     
-        Set<ConstraintViolation<DishUpdateRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty(), "There should be no violations for a valid request");
-    }
-
-    @Test
-    void testNullPrice() {
-        DishUpdateRequest request = buildValidDishUpdateRequest();
-        request.setPrice(null);
-
-        Set<ConstraintViolation<DishUpdateRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("price")));
-    }
-
-    @Test
-    void testPriceZero() {
-        DishUpdateRequest request = buildValidDishUpdateRequest();
+        request.setId(0L);
+        request.setDescription("");
         request.setPrice(0);
 
         Set<ConstraintViolation<DishUpdateRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
+        assertEquals(3, violations.size());
     }
 
     @Test
-    void testBlankDescription() {
-        DishUpdateRequest request = buildValidDishUpdateRequest();
-        request.setDescription("");
-
+    void nullValues_shouldReturnViolations() {
+        DishUpdateRequest request = new DishUpdateRequest();
+        request.setDescription(null);
+        request.setPrice(null);
+        request.setId(1L);
         Set<ConstraintViolation<DishUpdateRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("description")));
-    }
 
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath().toString().equals("description")
+                        && v.getMessage().equals(DtoConstants.FIELD_REQUIRED)));
+
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath().toString().equals("price")
+                        && v.getMessage().equals(DtoConstants.FIELD_REQUIRED)));
+    }
 
 }

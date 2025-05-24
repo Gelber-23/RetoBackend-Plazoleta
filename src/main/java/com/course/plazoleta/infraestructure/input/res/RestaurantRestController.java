@@ -3,7 +3,9 @@ package com.course.plazoleta.infraestructure.input.res;
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IRestaurantHandler;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.utils.constants.OpenApiConstants;
+import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,8 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/restaurant/")
@@ -62,8 +62,12 @@ public class RestaurantRestController {
     })
     @GetMapping()
     @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
-    public ResponseEntity<List<RestaurantResponse>> getAllRestaurants(){
-        return ResponseEntity.ok(restaurantHandler.getAllRestaurants());
+    public ResponseEntity<PageModel<RestaurantResponse>> getAllRestaurants(
+    @RequestParam(name = "page", defaultValue = ValuesConstants.MIN_VALUE_PAGE_PAGINATION) int page,
+    @RequestParam(name = "pageSize", defaultValue =  ValuesConstants.MIN_VALUE_PAGE_SIZE_PAGINATION) int pageSize,
+    @RequestParam(name = "field", defaultValue =  ValuesConstants.DEFAULT_FIELD_ORDER_RESTAURANT_PAGINATION) String field
+    ) {
+        return ResponseEntity.ok(restaurantHandler.getAllRestaurants(page,pageSize,field));
     }
 
 

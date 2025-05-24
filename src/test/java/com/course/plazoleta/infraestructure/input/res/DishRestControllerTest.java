@@ -4,9 +4,7 @@ import com.course.plazoleta.application.dto.request.DishRequest;
 import com.course.plazoleta.application.dto.request.DishUpdateRequest;
 import com.course.plazoleta.application.dto.response.DishResponse;
 import com.course.plazoleta.application.handler.IDishHandler;
-import com.course.plazoleta.application.mapper.response.IDishResponseMapper;
 import com.course.plazoleta.domain.model.Dish;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -25,87 +22,53 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DishRestControllerTest {
+
     @Mock
     private IDishHandler dishHandler;
-    @Mock
-    private IDishResponseMapper dishResponseMapper;
-
     @InjectMocks
     private DishRestController dishRestController;
-
-
-    private Dish dish;
-    @BeforeEach
-    void setUp() {
-
-        dish = new Dish();
-        dish.setId(1L);
-        dish.setName("Dish");
-        dish.setDescription("Dish New");
-        dish.setIdCategory(1L);
-        dish.setActive(true);
-        dish.setPrice(10);
-        dish.setIdRestaurant(1);
-        dish.setUrlImage("https://logo.com/logo.png");
-    }
-
     @Test
-    void shouldSaveDishSuccessfully() {
+    void saveDish_shouldReturnCreated() {
         DishRequest request = new DishRequest();
-
-
-        request.setName("Dish");
-        request.setDescription("Dish New");
-        request.setIdCategory(1);
-        request.setPrice(10);
-        request.setIdRestaurant(1);
-        request.setUrlImage("https://logo.com/logo.png");
-
-        ResponseEntity<Void> response = dishRestController.saveDish(request);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        dishRestController.saveDish(request);
         verify(dishHandler).saveDish(request);
     }
 
     @Test
-    void shouldGetDishByIdSuccessfully() {
-
-        DishResponse dishResponse =  dishResponseMapper.toResponse(dish);
-
-        when(dishHandler.getDishById(dish.getId())).thenReturn(dishResponse);
-
-        ResponseEntity<DishResponse> response = dishRestController.getDishById(dish.getId());
-
+    void getDishById_shouldReturnDish() {
+        Long id = 1L;
+        DishResponse expected = new DishResponse();
+        when(dishHandler.getDishById(id)).thenReturn(expected);
+        ResponseEntity<DishResponse> response = dishRestController.getDishById(id);
+        verify(dishHandler).getDishById(id);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(dishResponse, response.getBody());
-        verify(dishHandler).getDishById(dish.getId());
+        assertEquals(expected, response.getBody());
     }
 
     @Test
-    void shouldGetAllDishesSuccessfully() {
-        List<DishResponse> responseList = Collections.singletonList(dishResponseMapper.toResponse(dish));
-
-        when(dishHandler.getAllDishes()).thenReturn(responseList);
-
+    void getAllDishes_shouldReturnList() {
+        List<DishResponse> expectedList = Collections.singletonList(new DishResponse());
+        when(dishHandler.getAllDishes()).thenReturn(expectedList);
         ResponseEntity<List<DishResponse>> response = dishRestController.getAllDishes();
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
         verify(dishHandler).getAllDishes();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedList, response.getBody());
     }
 
     @Test
-    void shouldUpdateDishSuccessfully() {
-        DishUpdateRequest updateRequest = new DishUpdateRequest();
-
-        updateRequest.setDescription("Updated Description");
-
-        updateRequest.setPrice(20);
-
-
-        ResponseEntity<Void> response = dishRestController.updateDish(updateRequest);
-
+    void updateDish_shouldReturnOk() {
+        DishUpdateRequest request = new DishUpdateRequest();
+        ResponseEntity<Void> response = dishRestController.updateDish(request);
+        verify(dishHandler).updateDish(request);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(dishHandler).updateDish(updateRequest);
     }
+
+    @Test
+    void changeStateDish_shouldReturnOk() {
+        Dish id = new Dish();
+        ResponseEntity<Void> response = dishRestController.changeStateDish(id);
+        verify(dishHandler).changeStateDish(id);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
 }

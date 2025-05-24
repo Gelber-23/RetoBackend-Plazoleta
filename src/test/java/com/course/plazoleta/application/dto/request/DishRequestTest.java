@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,92 +16,59 @@ class DishRequestTest {
     private Validator validator;
 
     @BeforeEach
-    void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    void setupValidator() {
+        ValidatorFactory factory = Validation.byDefaultProvider()
+                .configure()
+                .messageInterpolator(new ParameterMessageInterpolator())
+                .buildValidatorFactory();
+
         validator = factory.getValidator();
     }
 
     @Test
-    void testValidDishRequest() {
+    void validDishRequest_shouldHaveNoViolations() {
         DishRequest request = new DishRequest();
-        request.setName("Burger");
-        request.setPrice(100);
-        request.setDescription("Juicy beef burger");
+        request.setName("Grilled Chicken");
+        request.setPrice(15000);
+        request.setDescription("Tasty grilled chicken with sides");
         request.setUrlImage("https://example.com/image.jpg");
         request.setIdCategory(1L);
         request.setIdRestaurant(1L);
+
         Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertTrue(violations.isEmpty(), "There should be no violations for a valid request");
+        assertTrue(violations.isEmpty());
     }
 
     @Test
-    void testBlankName() {
-        DishRequest request = buildValidDishRequest();
-        request.setName("");
+    void blankFields_shouldTriggerViolations() {
+        DishRequest request = new DishRequest();
+        request.setName("");  // blank
+        request.setPrice(0);  // invalid
+        request.setDescription("   ");  // blank
+        request.setUrlImage("invalid-url");  // invalid URL
+        request.setIdCategory(0L);  // invalid
+        request.setIdRestaurant(-1L);  // invalid
 
         Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
+        assertEquals(6, violations.size());
     }
 
     @Test
-    void testNullPrice() {
-        DishRequest request = buildValidDishRequest();
+    void nullValues_shouldTriggerViolations() {
+        DishRequest request = new DishRequest();
+        request.setName(null);
         request.setPrice(null);
+        request.setDescription(null);
+        request.setUrlImage(null);
+
 
         Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
+        assertEquals(6, violations.size());
+
+        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("name")));
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("price")));
-    }
-
-    @Test
-    void testPriceZero() {
-        DishRequest request = buildValidDishRequest();
-        request.setPrice(0);
-
-        Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-    }
-
-    @Test
-    void testBlankDescription() {
-        DishRequest request = buildValidDishRequest();
-        request.setDescription("");
-
-        Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("description")));
-    }
-
-    @Test
-    void testInvalidUrl() {
-        DishRequest request = buildValidDishRequest();
-        request.setUrlImage("not-a-url");
-
-        Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
         assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("urlImage")));
     }
 
-
-
-    @Test
-    void testNegativeCategory() {
-        DishRequest request = buildValidDishRequest();
-        request.setIdCategory(0);
-
-        Set<ConstraintViolation<DishRequest>> violations = validator.validate(request);
-        assertFalse(violations.isEmpty());
-    }
-
-    private DishRequest buildValidDishRequest() {
-        DishRequest request = new DishRequest();
-        request.setName("Pizza");
-        request.setPrice(50);
-        request.setDescription("Delicious cheese pizza");
-        request.setUrlImage("https://example.com/pizza.jpg");
-        request.setIdCategory(2);
-        request.setIdRestaurant(1);
-        return request;
-    }
 }
