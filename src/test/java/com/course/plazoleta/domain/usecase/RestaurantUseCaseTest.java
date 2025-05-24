@@ -1,7 +1,14 @@
 package com.course.plazoleta.domain.usecase;
 
+import com.course.plazoleta.domain.api.IUserServicePort;
+import com.course.plazoleta.domain.exception.RestaurantValidationException;
+import com.course.plazoleta.domain.exception.UserNotOwnerException;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
+import com.course.plazoleta.domain.model.RoleDto;
+import com.course.plazoleta.domain.model.User;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
+import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,60 +20,88 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RestaurantUseCaseTest {
     @Mock
     private IRestaurantPersistencePort restaurantPersistencePort;
-
+    @Mock
+    private IUserServicePort userServicePort;
     @InjectMocks
     private RestaurantUseCase restaurantUseCase;
 
-    private Restaurant restaurant;
-
-    @BeforeEach
-    void setUp() {
-        restaurant = new Restaurant(1L, "Restaurant", "Address", 100L, "+1234567890", "https://logo.com/logo.png", "123456789");
-    }
 
     @Test
-    void shouldSaveRestaurant() {
+    void saveRestaurant_ValidOwner_SavesRestaurant() {
+        Restaurant restaurant = createValidRestaurant();
+        User owner = new User(1L, "Test", "User", "123", "1234567890", null, "test@email.com", "pass",
+                new RoleDto(ValuesConstants.ID_ROLE_OWNER, "OWNER", "Restaurant Owner"));
+
+
+        when(userServicePort.getUserById(restaurant.getId_owner())).thenReturn(owner);
+
         restaurantUseCase.saveRestaurant(restaurant);
-        verify(restaurantPersistencePort).saveRestaurant(restaurant);
+
+        verify(restaurantPersistencePort, times(1)).saveRestaurant(restaurant);
     }
 
     @Test
-    void shouldReturnRestaurantById() {
-        when(restaurantPersistencePort.getRestaurantById(1)).thenReturn(restaurant);
+    void saveRestaurant_NotOwner_ThrowsUserNotOwnerException() {
+        Restaurant restaurant = createValidRestaurant();
+        User user = new User(1L, "Test", "User", "123", "1234567890", null, "test@email.com", "pass",
+                new RoleDto(ValuesConstants.ID_ROLE_EMPLOYEE, "ADMIN", "Admin"));
 
-        Restaurant result = restaurantUseCase.getRestaurantById(1);
+        when(userServicePort.getUserById(restaurant.getId_owner())).thenReturn(user);
 
-        assertNotNull(result);
-        assertEquals(restaurant.getId(), result.getId());
-        verify(restaurantPersistencePort).getRestaurantById(1);
+        assertThrows(UserNotOwnerException.class, () -> restaurantUseCase.saveRestaurant(restaurant));
     }
 
     @Test
-    void shouldReturnAllRestaurants() {
-        List<Restaurant> restaurantList = Arrays.asList(restaurant);
+    void validateRestaurant_InvalidFields_ThrowsException() {
+        Restaurant restaurant = new Restaurant();
 
-        when(restaurantPersistencePort.getAllRestaurants()).thenReturn(restaurantList);
+        RestaurantValidationException ex = assertThrows(RestaurantValidationException.class,
+                () -> RestaurantUseCase.validateRestaurant(restaurant));
 
-        List<Restaurant> result = restaurantUseCase.getAllRestaurants();
-
-        assertEquals(1, result.size());
-        assertEquals("Restaurant", result.get(0).getName());
-        verify(restaurantPersistencePort).getAllRestaurants();
+        assertFalse(ex.getErrors().isEmpty());
     }
 
     @Test
-    void shouldDeleteRestaurantById() {
-        long id = 1;
+    void getRestaurantById_ReturnsRestaurant() {
+        Restaurant restaurant = createValidRestaurant();
+        when(restaurantPersistencePort.getRestaurantById(1L)).thenReturn(restaurant);
 
-        restaurantUseCase.deleteRestaurantById(id);
+        Restaurant result = restaurantUseCase.getRestaurantById(1L);
 
-        verify(restaurantPersistencePort).deleteRestaurantById(id);
+        assertEquals(restaurant, result);
+    }
+
+    @Test
+    void getAllRestaurants_ReturnsPage() {
+        PageModel<Restaurant> page = new PageModel<>(List.of(createValidRestaurant()), 0, 10, 1, 1);
+        when(restaurantPersistencePort.getAllRestaurants(0, 10, "name")).thenReturn(page);
+
+        PageModel<Restaurant> result = restaurantUseCase.getAllRestaurants(0, 10, "name");
+
+        assertEquals(1, result.getContent().size());
+    }
+
+    @Test
+    void deleteRestaurantById_Deletes() {
+        restaurantUseCase.deleteRestaurantById(1L);
+        verify(restaurantPersistencePort).deleteRestaurantById(1L);
+    }
+
+    // Helper
+    private Restaurant createValidRestaurant() {
+        Restaurant r = new Restaurant();
+        r.setName("My Restaurant");
+        r.setAddress("123 Main St");
+        r.setId_owner(1L);
+        r.setPhone("12345678903");
+        r.setUrlLogo("https://logo.com");
+        r.setNit("1234567890");
+        return r;
     }
 }

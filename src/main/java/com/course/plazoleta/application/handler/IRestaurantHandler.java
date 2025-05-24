@@ -2,9 +2,7 @@ package com.course.plazoleta.application.handler;
 
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
-
-
-import java.util.List;
+import com.course.plazoleta.domain.model.PageModel;
 
 public interface IRestaurantHandler {
 
@@ -12,7 +10,7 @@ public interface IRestaurantHandler {
 
     RestaurantResponse getRestaurantById(long id);
 
-    List<RestaurantResponse> getAllRestaurants();
+    PageModel<RestaurantResponse> getAllRestaurants(Integer page , Integer pageSize, String fieldToSort);
 
     void deleteRestaurantById(long id);
 }

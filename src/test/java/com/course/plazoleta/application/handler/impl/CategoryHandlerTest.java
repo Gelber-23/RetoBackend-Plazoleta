@@ -35,48 +35,47 @@ class CategoryHandlerTest {
     private CategoryHandler categoryHandler;
 
     @Test
-    void saveCategory_delegatesToServiceWithMappedCategory() {
-        CategoryRequest categoryRequest = new CategoryRequest();
+    void saveCategory_ShouldMapAndCallService() {
+        CategoryRequest request = new CategoryRequest();
         Category category = new Category();
 
-        when(categoryRequestMapper.toCategory(categoryRequest)).thenReturn(category);
+        when(categoryRequestMapper.toCategory(request)).thenReturn(category);
 
-        categoryHandler.saveCategory(categoryRequest);
+        categoryHandler.saveCategory(request);
 
-        verify(categoryRequestMapper).toCategory(categoryRequest);
+        verify(categoryRequestMapper).toCategory(request);
         verify(categoryServicePort).saveCategory(category);
     }
 
     @Test
-    void getCategoryById_returnsMappedResponse() {
-        Long id = 1L;
+    void getCategoryById_ShouldReturnMappedResponse() {
+        long id = 1L;
         Category category = new Category();
-        CategoryResponse categoryResponse = new CategoryResponse();
+        CategoryResponse response = new CategoryResponse();
 
         when(categoryServicePort.getCategoryById(id)).thenReturn(category);
-        when(categoryResponseMapper.toResponse(category)).thenReturn(categoryResponse);
+        when(categoryResponseMapper.toResponse(category)).thenReturn(response);
 
-        CategoryResponse categoryResponseActual = categoryHandler.getCategoryById(id);
+        CategoryResponse result = categoryHandler.getCategoryById(id);
 
-        assertSame(categoryResponse, categoryResponseActual);
+        assertEquals(response, result);
         verify(categoryServicePort).getCategoryById(id);
         verify(categoryResponseMapper).toResponse(category);
     }
 
     @Test
-    void getAllCategories_returnsMappedResponseList() {
-        Category category = new Category();
-        List<Category> categories = Collections.singletonList(category);
-        CategoryResponse response = new CategoryResponse();
-        List<CategoryResponse> responses = Collections.singletonList(response);
+    void getAllCategories_ShouldReturnMappedList() {
+        List<Category> categories = Collections.singletonList(new Category());
+        List<CategoryResponse> responses = Collections.singletonList(new CategoryResponse());
 
         when(categoryServicePort.getAllCategories()).thenReturn(categories);
         when(categoryResponseMapper.toResponseList(categories)).thenReturn(responses);
 
-        List<CategoryResponse> actualList = categoryHandler.getAllCategories();
+        List<CategoryResponse> result = categoryHandler.getAllCategories();
 
-        assertEquals(responses, actualList);
+        assertEquals(responses, result);
         verify(categoryServicePort).getAllCategories();
         verify(categoryResponseMapper).toResponseList(categories);
     }
+
 }

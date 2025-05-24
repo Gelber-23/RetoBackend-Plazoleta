@@ -3,9 +3,7 @@ package com.course.plazoleta.infraestructure.input.res;
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IRestaurantHandler;
-import com.course.plazoleta.application.mapper.response.IRestaurantResponseMapper;
-import com.course.plazoleta.domain.model.Restaurant;
-import org.junit.jupiter.api.BeforeEach;
+import com.course.plazoleta.domain.model.PageModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -25,81 +21,79 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class RestaurantRestControllerTest {
+
+
     @Mock
     private IRestaurantHandler restaurantHandler;
-    @Mock
-    private IRestaurantResponseMapper restaurantResponseMapper;
-
     @InjectMocks
     private RestaurantRestController restaurantRestController;
-
-
-    private Restaurant restaurant;
-    @BeforeEach
-    void setUp() {
-
-        restaurant = new Restaurant();
-        restaurant.setId(1L);
-        restaurant.setName("Restaurant");
-        restaurant.setAddress("Address");
-        restaurant.setId_owner(100L);
-        restaurant.setPhone("+1234567890");
-        restaurant.setUrlLogo("https://logo.com/logo.png");
-        restaurant.setNit("123456789");
-
-    }
     @Test
-    void shouldSaveRestaurantSuccessfully() {
+    void saveRestaurant_shouldReturnCreated() {
+
         RestaurantRequest request = new RestaurantRequest();
 
-        request.setName("Restaurant");
-        request.setAddress("Address");
-        request.setId_owner(100);
-        request.setPhone("+1234567890");
-        request.setUrlLogo("https://logo.com/logo.png");
-        request.setNit("123456789");
 
         ResponseEntity<Void> response = restaurantRestController.saveRestaurant(request);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
         verify(restaurantHandler).saveRestaurant(request);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void shouldGetRestaurantByIdSuccessfully() {
+    void getRestaurantById_shouldReturnRestaurant() {
 
-        RestaurantResponse restaurantResponse =  restaurantResponseMapper.toResponse(restaurant);
+        long id = 1L;
+        RestaurantResponse expectedResponse = new RestaurantResponse();
+        when(restaurantHandler.getRestaurantById(id)).thenReturn(expectedResponse);
 
-        when(restaurantHandler.getRestaurantById(restaurant.getId())).thenReturn(restaurantResponse);
 
-        ResponseEntity<RestaurantResponse> response = restaurantRestController.getRestaurantById(restaurant.getId());
+        ResponseEntity<RestaurantResponse> response = restaurantRestController.getRestaurantById(id);
 
+
+        verify(restaurantHandler).getRestaurantById(id);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(restaurantResponse, response.getBody());
-        verify(restaurantHandler).getRestaurantById(restaurant.getId());
+        assertEquals(expectedResponse, response.getBody());
     }
 
     @Test
-    void shouldGetAllRestaurantsSuccessfully() {
-        List<RestaurantResponse> responseList = Collections.singletonList(restaurantResponseMapper.toResponse(restaurant));
+    void getAllRestaurants_shouldReturnPageModel() {
 
-        when(restaurantHandler.getAllRestaurants()).thenReturn(responseList);
+        int page = 0;
+        int pageSize = 10;
+        String field = "name";
 
-        ResponseEntity<List<RestaurantResponse>> response = restaurantRestController.getAllRestaurants();
+        RestaurantResponse responseItem = new RestaurantResponse();
+        List<RestaurantResponse> content = Collections.singletonList(responseItem);
+        PageModel<RestaurantResponse> expectedPage = new PageModel<>(
+                content,
+                page,
+                pageSize,
+                1L,
+                1
+        );
 
+        when(restaurantHandler.getAllRestaurants(page, pageSize, field)).thenReturn(expectedPage);
+
+
+        ResponseEntity<PageModel<RestaurantResponse>> response = restaurantRestController.getAllRestaurants(page, pageSize, field);
+
+
+        verify(restaurantHandler).getAllRestaurants(page, pageSize, field);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(1, Objects.requireNonNull(response.getBody()).size());
-        verify(restaurantHandler).getAllRestaurants();
+        assertEquals(expectedPage, response.getBody());
     }
 
     @Test
-    void shouldDeleteRestaurantSuccessfully() {
-        int restaurantId = 1;
+    void deleteRestaurantById_shouldReturnOk() {
 
-        ResponseEntity<Void> response = restaurantRestController.deleteRestaurantById(restaurantId);
+        long id = 1L;
 
+
+        ResponseEntity<Void> response = restaurantRestController.deleteRestaurantById(id);
+
+        verify(restaurantHandler).deleteRestaurantById(id);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(restaurantHandler).deleteRestaurantById(restaurantId);
     }
 
 }

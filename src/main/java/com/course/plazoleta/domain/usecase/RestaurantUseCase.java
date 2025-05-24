@@ -4,6 +4,7 @@ import com.course.plazoleta.domain.api.IRestaurantServicePort;
 import com.course.plazoleta.domain.api.IUserServicePort;
 import com.course.plazoleta.domain.exception.RestaurantValidationException;
 import com.course.plazoleta.domain.exception.UserNotOwnerException;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
 import com.course.plazoleta.domain.model.User;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
@@ -40,8 +41,8 @@ public class RestaurantUseCase implements IRestaurantServicePort {
     }
 
     @Override
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantPersistencePort.getAllRestaurants();
+    public PageModel<Restaurant> getAllRestaurants(Integer page , Integer pageSize, String fieldToSort) {
+        return restaurantPersistencePort.getAllRestaurants(page,pageSize,fieldToSort);
     }
 
     @Override
@@ -53,9 +54,7 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         List<String> errors = new ArrayList<>();
 
         String name = restaurant.getName();
-        if (name == null || name.isBlank()) {
-            errors.add(ExceptionsConstants.NAME_REQUIRED);
-        } else if (Pattern.matches(DtoConstants.ONLY_NUMBERS_REGEX, name)) {
+        if (name == null || name.isBlank()|| Pattern.matches(DtoConstants.ONLY_NUMBERS_REGEX, name)) {
             errors.add(DtoConstants.FIELD_NOT_ONLY_NUMBER_MESSAGE);
         }
 
@@ -73,12 +72,10 @@ public class RestaurantUseCase implements IRestaurantServicePort {
         }
 
         String phone = restaurant.getPhone();
-        if (phone == null || phone.isBlank()) {
-            errors.add(ExceptionsConstants.PHONE_REQUIRED);
-        } else if (!Pattern.matches(DtoConstants.PHONE_REGEX, phone)) {
+        if (phone == null || phone.isBlank() || !Pattern.matches(DtoConstants.PHONE_REGEX, phone)) {
             errors.add(ExceptionsConstants.PHONE_FORMAT_ERROR);
         } else if (phone.length() > ValuesConstants.MAX_LENGTH_PHONE) {
-            errors.add(ExceptionsConstants.PHONE_MUST_HAVE_13_CHARACTERS);
+            errors.add(ExceptionsConstants.PHONE_MUST_HAVE_LESS_THAN_13_CHARACTERS);
         }
 
         String urlLogo = restaurant.getUrlLogo();

@@ -6,13 +6,11 @@ import com.course.plazoleta.application.handler.IRestaurantHandler;
 import com.course.plazoleta.application.mapper.request.IRestaurantRequestMapper;
 import com.course.plazoleta.application.mapper.response.IRestaurantResponseMapper;
 import com.course.plazoleta.domain.api.IRestaurantServicePort;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,8 +36,8 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public List<RestaurantResponse> getAllRestaurants() {
-        return restaurantResponseMapper.toResponseList(restaurantServicePort.getAllRestaurants());
+    public PageModel<RestaurantResponse> getAllRestaurants(Integer page , Integer pageSize, String fieldToSort) {
+        return restaurantResponseMapper.toResponseList(restaurantServicePort.getAllRestaurants(page,pageSize,fieldToSort));
     }
 
     @Override

@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -74,7 +73,7 @@ public class DishRestController {
             @ApiResponse(responseCode = "409", description = OpenApiConstants.UPDATE_NOT_EXIST_DISH_MESSAGE, content = @Content)
     })
     @PutMapping("update")
-    //@PreAuthorize("@permissionService.isOwnerOfDish(authentication,#dishUpdateRequest.id)")
+    @PreAuthorize("@permissionService.isOwnerOfDish(authentication,#dishUpdateRequest.id)")
     public ResponseEntity<Void> updateDish(@Valid @RequestBody DishUpdateRequest dishUpdateRequest){
         dishHandler.updateDish(dishUpdateRequest);
         return new ResponseEntity<>(HttpStatus.OK);

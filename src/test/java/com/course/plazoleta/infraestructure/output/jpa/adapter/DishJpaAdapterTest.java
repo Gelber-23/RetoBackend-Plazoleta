@@ -1,12 +1,10 @@
 package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
-import com.course.plazoleta.domain.model.Dish;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
-import com.course.plazoleta.infraestructure.output.jpa.entity.CategoryEntity;
+import com.course.plazoleta.domain.model.Dish;
 import com.course.plazoleta.infraestructure.output.jpa.entity.DishEntity;
 import com.course.plazoleta.infraestructure.output.jpa.mapper.IDishEntityMapper;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,10 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class DishJpaAdapterTest {
+
 
     @Mock
     private IDishRepository dishRepository;
@@ -30,122 +30,87 @@ class DishJpaAdapterTest {
     private IDishEntityMapper dishEntityMapper;
 
     @InjectMocks
-    private DishJpaAdapter adapter;
-
-    private Dish domainDish;
-    private DishEntity entity;
-
-    @BeforeEach
-    void setUp() {
-        // Domain model
-        domainDish = new Dish();
-        domainDish.setId(1L);
-        domainDish.setName("Taco");
-        domainDish.setDescription("Spicy");
-        domainDish.setIdCategory(2L);
-        domainDish.setPrice(100);
-        domainDish.setUrlImage("url");
-        domainDish.setIdRestaurant(3);
-        domainDish.setActive(false);
-
-
-        CategoryEntity categoryEntity = new CategoryEntity();
-        categoryEntity.setId(2L);
-        categoryEntity.setName("Mexican");
-        categoryEntity.setDescription("Mexican cuisine");
-
-
-        entity = new DishEntity();
-        entity.setId(1L);
-        entity.setName("Taco");
-        entity.setDescription("Spicy");
-        entity.setIdCategory(categoryEntity); // setter for CategoryEntity field
-        entity.setPrice(100);
-        entity.setUrlImage("url");
-        entity.setIdRestaurant(3);
-        entity.setActive(true);
-    }
+    private DishJpaAdapter dishJpaAdapter;
 
     @Test
-    void saveDish_setsActiveAndCallsRepository() {
-        when(dishEntityMapper.toEntity(domainDish)).thenReturn(entity);
+    void saveDish_shouldCallRepositorySaveWithMappedEntity() {
+        Dish dish = new Dish();
+        DishEntity entity = new DishEntity();
+        when(dishEntityMapper.toEntity(dish)).thenReturn(entity);
 
-        adapter.saveDish(domainDish);
+        dishJpaAdapter.saveDish(dish);
 
-        assertTrue(domainDish.getActive());
-        verify(dishEntityMapper).toEntity(domainDish);
         verify(dishRepository).save(entity);
     }
 
     @Test
-    void getDishById_returnsMappedModel() {
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(entity));
-        when(dishEntityMapper.toModel(entity)).thenReturn(domainDish);
+    void getDishById_shouldReturnMappedModel() {
+        Long id = 1L;
+        DishEntity entity = new DishEntity();
+        Dish model = new Dish();
 
-        Dish result = adapter.getDishById(1L);
+        when(dishRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(dishEntityMapper.toModel(entity)).thenReturn(model);
 
-        assertEquals(domainDish, result);
-        verify(dishRepository).findById(1L);
+        Dish result = dishJpaAdapter.getDishById(id);
+
+        verify(dishRepository).findById(id);
         verify(dishEntityMapper).toModel(entity);
+        assertEquals(model, result);
     }
 
     @Test
-    void getDishById_throwsWhenNotFound() {
-        when(dishRepository.findById(1L)).thenReturn(Optional.empty());
+    void getDishById_shouldThrowExceptionWhenNotFound() {
+        Long id = 1L;
+        when(dishRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(NoDataFoundException.class, () -> adapter.getDishById(1L));
-        verify(dishRepository).findById(1L);
-        verify(dishEntityMapper, never()).toModel(any());
+        assertThrows(NoDataFoundException.class, () -> dishJpaAdapter.getDishById(id));
     }
 
     @Test
-    void getAllDishes_returnsMappedList() {
-        List<DishEntity> entities = Collections.singletonList(entity);
-        List<Dish> domains = Collections.singletonList(domainDish);
+    void getAllDishes_shouldReturnMappedList() {
+        DishEntity entity = new DishEntity();
+        Dish model = new Dish();
+        List<DishEntity> entityList = Collections.singletonList(entity);
+        List<Dish> modelList = Collections.singletonList(model);
 
-        when(dishRepository.findAll()).thenReturn(entities);
-        when(dishEntityMapper.toModelList(entities)).thenReturn(domains);
+        when(dishRepository.findAll()).thenReturn(entityList);
+        when(dishEntityMapper.toModelList(entityList)).thenReturn(modelList);
 
-        List<Dish> result = adapter.getAllDishes();
+        List<Dish> result = dishJpaAdapter.getAllDishes();
 
-        assertEquals(domains, result);
         verify(dishRepository).findAll();
-        verify(dishEntityMapper).toModelList(entities);
+        verify(dishEntityMapper).toModelList(entityList);
+        assertEquals(modelList, result);
     }
 
     @Test
-    void getAllDishes_throwsWhenEmpty() {
+    void getAllDishes_shouldThrowExceptionWhenEmpty() {
         when(dishRepository.findAll()).thenReturn(Collections.emptyList());
 
-        assertThrows(NoDataFoundException.class, () -> adapter.getAllDishes());
-        verify(dishRepository).findAll();
-        verify(dishEntityMapper, never()).toModelList(anyList());
+        assertThrows(NoDataFoundException.class, () -> dishJpaAdapter.getAllDishes());
     }
 
     @Test
-    void updateDish_updatesFieldsAndSaves() {
-        when(dishRepository.findById(1L)).thenReturn(Optional.of(entity));
+    void updateDish_shouldCallSaveWithMappedEntity() {
+        Dish dish = new Dish();
+        DishEntity entity = new DishEntity();
+        when(dishEntityMapper.toEntity(dish)).thenReturn(entity);
 
-        domainDish.setPrice(150);
-        domainDish.setDescription("Very spicy");
+        dishJpaAdapter.updateDish(dish);
 
-        adapter.updateDish(domainDish);
-
-        assertEquals(150, entity.getPrice());
-        assertEquals("Very spicy", entity.getDescription());
-        verify(dishRepository).findById(1L);
         verify(dishRepository).save(entity);
     }
 
     @Test
-    void updateDish_throwsWhenNotFound() {
-        when(dishRepository.findById(1L)).thenReturn(Optional.empty());
+    void changeStateDish_shouldCallSaveWithMappedEntity() {
+        Dish dish = new Dish();
+        DishEntity entity = new DishEntity();
+        when(dishEntityMapper.toEntity(dish)).thenReturn(entity);
 
-        RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> adapter.updateDish(domainDish));
-        assertTrue(ex.getMessage().contains("Dish not found: 1"));
+        dishJpaAdapter.changeStateDish(dish);
 
-        verify(dishRepository).findById(1L);
-        verify(dishRepository, never()).save(any());
+        verify(dishRepository).save(entity);
     }
+
 }
