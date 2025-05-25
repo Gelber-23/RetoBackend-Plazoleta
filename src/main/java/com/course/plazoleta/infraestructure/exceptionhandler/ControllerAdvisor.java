@@ -37,7 +37,15 @@ public class ControllerAdvisor {
                         ex.getMessage()
                 ));
     }
-
+    @ExceptionHandler(ClientHaveOrderActiveException.class)
+    public ResponseEntity<Map<String, String>> handleClientHaveOrderActive (
+            ClientHaveOrderActiveException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
     @ExceptionHandler(UserNotOwnerException.class)
     public ResponseEntity<Map<String, String>> handleUserNotOwner(
             UserNotOwnerException ex) {
@@ -75,6 +83,14 @@ public class ControllerAdvisor {
                 .body(Collections.singletonMap("errors", ex.getErrors()));
     }
 
+    @ExceptionHandler(OrderValidationException.class)
+    public ResponseEntity<Map<String, List<String>>> handleOrderValidation(
+            OrderValidationException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(Collections.singletonMap("errors", ex.getErrors()));
+    }
     @ExceptionHandler(ExternalServiceException.class)
     public ResponseEntity<Map<String, String>> handleExternalServiceError(
             ExternalServiceException ex) {
@@ -84,7 +100,15 @@ public class ControllerAdvisor {
                        ex.getCause().toString()
                 ));
     }
-
+    @ExceptionHandler(DishNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleDishNotFound (
+            DishNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

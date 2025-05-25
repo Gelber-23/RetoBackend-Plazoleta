@@ -28,5 +28,7 @@ public class DtoConstants {
     public static final String NIT_SCHEMA_EXAMPLE = "145254";
     //DESCRIPTION
     public static final String DESCRIPTION_SCHEMA_DESCRIPTION="Restaurant name" ;
-    public static final String DESCRIPTION_SCHEMA_EXAMPLE = "Pepe Grill";
+    public static final String DESCRIPTION_SCHEMA_EXAMPLE="Restaurant" ;
+
+    public static final String MUST_BE_ONE_DISH= "There must be at least one dish on the list";
 }
