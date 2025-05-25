@@ -50,12 +50,27 @@ public class OrderRestController {
             @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
     })
     @GetMapping()
-    @PreAuthorize("@permissionService.isClient(authentication)")
+    @PreAuthorize("@permissionService.isEmployee(authentication)")
     public ResponseEntity<PageModel<OrderResponse>> getOrdersFilterByState(
             @RequestParam(name = "page", defaultValue = ValuesConstants.MIN_VALUE_PAGE_PAGINATION) int page,
             @RequestParam(name = "pageSize", defaultValue =  ValuesConstants.MIN_VALUE_PAGE_SIZE_PAGINATION) int pageSize,
             @RequestParam(name = "state", defaultValue =  ValuesConstants.DEFAULT_FIELD_ORDER_STATE_PAGINATION) String state
     ) {
         return ResponseEntity.ok(orderHandler.getOrdersFilterByState(page,pageSize,state));
+    }
+
+    @Operation(summary = OpenApiConstants.TAKE_ORDER_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.TAKE_ORDER_MESSAGE,
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
+    })
+    @PutMapping("takeOrder")
+    @PreAuthorize("@permissionService.isEmployee(authentication)")
+    public ResponseEntity<OrderResponse> takeOrder(
+            @RequestParam(name = "idOrder", defaultValue = ValuesConstants.DEFAULT_ID_ORDER_TAKE) Long idOrder
+    ) {
+        return ResponseEntity.ok(orderHandler.takeOrder(idOrder));
     }
 }

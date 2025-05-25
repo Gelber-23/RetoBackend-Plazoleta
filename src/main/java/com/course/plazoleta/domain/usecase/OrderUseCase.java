@@ -4,18 +4,12 @@ import com.course.plazoleta.domain.api.IOrderServicePort;
 import com.course.plazoleta.domain.api.IUserServicePort;
 import com.course.plazoleta.domain.api.IUtilsServicePort;
 import com.course.plazoleta.domain.exception.*;
-import com.course.plazoleta.domain.model.Order;
-import com.course.plazoleta.domain.model.OrderDish;
-import com.course.plazoleta.domain.model.PageModel;
-import com.course.plazoleta.domain.model.User;
+import com.course.plazoleta.domain.model.*;
 import com.course.plazoleta.domain.spi.IOrderPersistencePort;
 import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class OrderUseCase implements IOrderServicePort {
 
@@ -58,16 +52,29 @@ public class OrderUseCase implements IOrderServicePort {
 
     @Override
     public PageModel<Order> getOrdersFilterByState(Integer page, Integer pageSize, String state) {
-        long idUser = utilsServicePort.getCurrentUserId();
-        User user = userServicePort.getUserById(idUser);
 
-        if(user.getRol() != null && user.getRol().getId() == ValuesConstants.ID_ROLE_EMPLOYEE)
-            throw new NotEmployeeUserException();
-
-        if(user.getIdRestaurant() != null && user.getIdRestaurant() <= 0)
-            throw new UserIsNotEmployeeRestaurantException();
+        User user = validEmployeeUser();
 
         return orderPersistencePort.getOrdersFilterByState(page,pageSize,state,user.getIdRestaurant());
+    }
+
+    @Override
+    public Order takeOrder(Long idOrder) {
+        User user = validEmployeeUser();
+        Order order = orderPersistencePort.getOrderById(idOrder);
+        if (order == null){
+            throw new NoDataFoundException();
+
+        }
+        if (!Objects.equals(order.getState(), ValuesConstants.STATUS_PENDING_ORDER)){
+            throw new NoDataFoundException();
+
+        }
+        order.setState(ValuesConstants.STATUS_PREPARATION_ORDER);
+        order.setIdChef(user.getId());
+
+        return orderPersistencePort.takeOrder( order );
+
     }
 
     public void validateOrder(Order order){
@@ -96,5 +103,18 @@ public class OrderUseCase implements IOrderServicePort {
         if (!errors.isEmpty()) {
             throw new OrderValidationException(errors);
         }
+    }
+
+    public User validEmployeeUser(){
+        long idUser = utilsServicePort.getCurrentUserId();
+        User user = userServicePort.getUserById(idUser);
+
+        if(user.getRol() != null && user.getRol().getId() != ValuesConstants.ID_ROLE_EMPLOYEE)
+            throw new NotEmployeeUserException();
+
+        if(user.getIdRestaurant() != null && user.getIdRestaurant() <= 0)
+            throw new UserIsNotEmployeeRestaurantException();
+
+        return user;
     }
 }

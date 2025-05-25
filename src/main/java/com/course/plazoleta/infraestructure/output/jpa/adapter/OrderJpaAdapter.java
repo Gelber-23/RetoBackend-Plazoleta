@@ -1,6 +1,7 @@
 package com.course.plazoleta.infraestructure.output.jpa.adapter;
 
 import com.course.plazoleta.domain.exception.DishNotFoundException;
+import com.course.plazoleta.domain.exception.NoDataFoundException;
 import com.course.plazoleta.domain.model.Order;
 import com.course.plazoleta.domain.model.OrderDish;
 import com.course.plazoleta.domain.model.PageModel;
@@ -104,5 +105,25 @@ public class OrderJpaAdapter implements IOrderPersistencePort {
 
         return orderRepository.existsByIdClientAndStateIn(idClient, states);
 
+    }
+
+    @Override
+    public Order getOrderById(Long idOrder) {
+        return orderEntityMapper.toOrderModel(orderRepository.findById(idOrder)
+                .orElseThrow(NoDataFoundException::new));
+    }
+
+    @Override
+    public Order takeOrder(Order order) {
+        OrderEntity orderEntity = orderRepository.save(orderEntityMapper.toEntity(order));
+        Order orderResponse = orderEntityMapper.toOrderModel(orderEntity) ;
+
+        List<OrderDishEntity> dishEntities = orderDishRepository.findAllByIdOrder_Id(orderEntity.getId());
+        List<OrderDish> dishes = dishEntities.stream()
+                .map(orderDishEntityMapper::toOrderModel)
+                .toList();
+        orderResponse.setDishes(dishes);
+
+        return orderResponse;
     }
 }

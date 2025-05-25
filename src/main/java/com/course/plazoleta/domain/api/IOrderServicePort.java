@@ -8,5 +8,5 @@ public interface IOrderServicePort {
     void createOrder (Order order);
 
     PageModel<Order> getOrdersFilterByState(Integer page , Integer pageSize, String state);
-
+    Order takeOrder (Long idOrder);
 }

@@ -16,7 +16,7 @@ public class PermissionService {
     private static final String ROLE_ADMIN= ValuesConstants.ROLE_STRING_VALUE_ADMIN;
     private static final String ROLE_OWNER= ValuesConstants.ROLE_STRING_VALUE_OWNER;
     private static final String ROLE_CLIENT= ValuesConstants.ROLE_STRING_VALUE_CLIENT;
-
+    private static final String ROLE_EMPLOYEE= ValuesConstants.ROLE_STRING_VALUE_EMPLOYEE;
     private final IRestaurantRepository restaurantRepository;
     private final IDishRepository dishRepository;
 
@@ -37,7 +37,10 @@ public class PermissionService {
         return auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals(ROLE_CLIENT));
     }
-
+    public boolean isEmployee(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals(ROLE_EMPLOYEE));
+    }
     public boolean isOwnerOfRestaurant(Authentication auth, Long restaurantId) {
         if (!isOwner(auth)) {
             return false;
