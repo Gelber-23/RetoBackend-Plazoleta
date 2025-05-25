@@ -2,10 +2,16 @@ package com.course.plazoleta.infraestructure.input.res;
 
 
 import com.course.plazoleta.application.dto.request.order.OrderCreateRequest;
+import com.course.plazoleta.application.dto.response.RestaurantResponse;
+import com.course.plazoleta.application.dto.response.order.OrderResponse;
 import com.course.plazoleta.application.handler.IOrderHandler;
+import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.utils.constants.OpenApiConstants;
+import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -14,10 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order/")
@@ -37,5 +40,22 @@ public class OrderRestController {
     public ResponseEntity<Void> createOrder (@Valid @RequestBody OrderCreateRequest orderCreateRequest) {
         orderHandler.createOrder(orderCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(summary = OpenApiConstants.GET_FILTER_ORDERS_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.GET_FILTER_ORDERS_MESSAGE,
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
+    })
+    @GetMapping()
+    @PreAuthorize("@permissionService.isClient(authentication)")
+    public ResponseEntity<PageModel<OrderResponse>> getOrdersFilterByState(
+            @RequestParam(name = "page", defaultValue = ValuesConstants.MIN_VALUE_PAGE_PAGINATION) int page,
+            @RequestParam(name = "pageSize", defaultValue =  ValuesConstants.MIN_VALUE_PAGE_SIZE_PAGINATION) int pageSize,
+            @RequestParam(name = "state", defaultValue =  ValuesConstants.DEFAULT_FIELD_ORDER_STATE_PAGINATION) String state
+    ) {
+        return ResponseEntity.ok(orderHandler.getOrdersFilterByState(page,pageSize,state));
     }
 }

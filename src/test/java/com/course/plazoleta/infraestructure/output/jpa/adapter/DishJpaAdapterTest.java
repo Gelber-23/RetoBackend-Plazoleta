@@ -130,7 +130,7 @@ class DishJpaAdapterTest {
 
         Page<DishEntity> pageResult = new PageImpl<>(dishEntities, PageRequest.of(page, pageSize), dishEntities.size());
 
-        when(dishRepository.findByIdRestaurant_IdAndIdCategory_Id(
+        when(dishRepository.findByIdRestaurant_IdAndIdCategory_IdAndActiveTrue(
                 (long) idRestaurant,
                 (long) idCategory,
                 PageRequest.of(page, pageSize)
@@ -146,7 +146,7 @@ class DishJpaAdapterTest {
         assertEquals(1, result.getTotalElements());
         assertEquals(1, result.getTotalPages());
 
-        verify(dishRepository).findByIdRestaurant_IdAndIdCategory_Id((long) idRestaurant, (long) idCategory, PageRequest.of(page, pageSize));
+        verify(dishRepository).findByIdRestaurant_IdAndIdCategory_IdAndActiveTrue((long) idRestaurant, (long) idCategory, PageRequest.of(page, pageSize));
         verify(dishEntityMapper).toModel(dishEntity);
     }
 }

@@ -12,11 +12,12 @@ public class Order {
     private Date date;
     private Long idChef ;
     private List<OrderDish> dishes ;
+    private String pin ;
 
     public Order() {
     }
 
-    public Order(Long id, Long idClient, Long idRestaurant, String state, Date date, Long idChef, List<OrderDish> dishes) {
+    public Order(Long id, Long idClient, Long idRestaurant, String state, Date date, Long idChef, List<OrderDish> dishes, String pin) {
         this.id = id;
         this.idClient = idClient;
         this.idRestaurant = idRestaurant;
@@ -24,6 +25,7 @@ public class Order {
         this.date = date;
         this.idChef = idChef;
         this.dishes = dishes;
+        this.pin = pin;
     }
 
     public Long getId() {
@@ -80,5 +82,13 @@ public class Order {
 
     public void setDishes(List<OrderDish> dishes) {
         this.dishes = dishes;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 }

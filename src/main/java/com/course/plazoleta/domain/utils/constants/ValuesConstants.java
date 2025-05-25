@@ -25,4 +25,6 @@ public class ValuesConstants {
     public static final String STATUS_CANCELED_ORDER = "CANCELED";
     public static final String STATUS_READY_ORDER = "READY";
     public static final String STATUS_DELIVERED_ORDER = "DELIVERED";
+    public static final String DEFAULT_FIELD_ORDER_STATE_PAGINATION = "PENDING";
+
 }

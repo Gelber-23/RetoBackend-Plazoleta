@@ -1,8 +1,6 @@
 package com.course.plazoleta.infraestructure.output.jpa.mapper;
 
-import com.course.plazoleta.domain.model.Dish;
 import com.course.plazoleta.domain.model.Order;
-import com.course.plazoleta.infraestructure.output.jpa.entity.DishEntity;
 import com.course.plazoleta.infraestructure.output.jpa.entity.OrderEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,12 +1,13 @@
 package com.course.plazoleta.domain.usecase;
 
 import com.course.plazoleta.domain.api.IOrderServicePort;
+import com.course.plazoleta.domain.api.IUserServicePort;
 import com.course.plazoleta.domain.api.IUtilsServicePort;
-import com.course.plazoleta.domain.exception.ClientHaveOrderActiveException;
-import com.course.plazoleta.domain.exception.OrderValidationException;
-import com.course.plazoleta.domain.exception.RestaurantValidationException;
+import com.course.plazoleta.domain.exception.*;
 import com.course.plazoleta.domain.model.Order;
 import com.course.plazoleta.domain.model.OrderDish;
+import com.course.plazoleta.domain.model.PageModel;
+import com.course.plazoleta.domain.model.User;
 import com.course.plazoleta.domain.spi.IOrderPersistencePort;
 import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
@@ -20,7 +21,7 @@ public class OrderUseCase implements IOrderServicePort {
 
     private final IOrderPersistencePort orderPersistencePort;
     private final IUtilsServicePort utilsServicePort;
-
+    private final IUserServicePort userServicePort;
 
 
     private static final List<String> ACTIVE_STATES_ORDER = Arrays.asList(
@@ -28,9 +29,10 @@ public class OrderUseCase implements IOrderServicePort {
             ValuesConstants.STATUS_PREPARATION_ORDER,
             ValuesConstants.STATUS_READY_ORDER
     );
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort, IUserServicePort userServicePort) {
         this.orderPersistencePort = orderPersistencePort;
         this.utilsServicePort = utilsServicePort;
+        this.userServicePort = userServicePort;
     }
 
     @Override
@@ -52,6 +54,20 @@ public class OrderUseCase implements IOrderServicePort {
 
 
         orderPersistencePort.createOrder(order);
+    }
+
+    @Override
+    public PageModel<Order> getOrdersFilterByState(Integer page, Integer pageSize, String state) {
+        long idUser = utilsServicePort.getCurrentUserId();
+        User user = userServicePort.getUserById(idUser);
+
+        if(user.getRol() != null && user.getRol().getId() == ValuesConstants.ID_ROLE_EMPLOYEE)
+            throw new NotEmployeeUserException();
+
+        if(user.getIdRestaurant() != null && user.getIdRestaurant() <= 0)
+            throw new UserIsNotEmployeeRestaurantException();
+
+        return orderPersistencePort.getOrdersFilterByState(page,pageSize,state,user.getIdRestaurant());
     }
 
     public void validateOrder(Order order){

@@ -1,6 +1,5 @@
 package com.course.plazoleta.infraestructure.output.jpa.entity;
 
-import com.course.plazoleta.domain.model.OrderDish;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,5 +28,5 @@ public class OrderEntity {
     private String state ;
     private Date date;
     private Long idChef ;
-
+    private String pin ;
 }
