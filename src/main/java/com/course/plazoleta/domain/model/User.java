@@ -15,6 +15,8 @@ public class User {
     private RoleDto rol;
     private Long idRestaurant;
 
+    public User() {
+    }
 
     public User(long id, String name, String lastName, String documentNumber, String phone, Date birthdate, String email, String password, RoleDto rol, Long idRestaurant) {
         this.id = id;
