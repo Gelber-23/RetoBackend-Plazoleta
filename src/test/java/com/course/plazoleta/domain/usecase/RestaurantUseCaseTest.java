@@ -9,14 +9,11 @@ import com.course.plazoleta.domain.model.RoleDto;
 import com.course.plazoleta.domain.model.User;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,7 +33,7 @@ class RestaurantUseCaseTest {
     void saveRestaurant_ValidOwner_SavesRestaurant() {
         Restaurant restaurant = createValidRestaurant();
         User owner = new User(1L, "Test", "User", "123", "1234567890", null, "test@email.com", "pass",
-                new RoleDto(ValuesConstants.ID_ROLE_OWNER, "OWNER", "Restaurant Owner"));
+                new RoleDto(ValuesConstants.ID_ROLE_OWNER, "OWNER", "Restaurant Owner"),0L);
 
 
         when(userServicePort.getUserById(restaurant.getId_owner())).thenReturn(owner);
@@ -50,7 +47,7 @@ class RestaurantUseCaseTest {
     void saveRestaurant_NotOwner_ThrowsUserNotOwnerException() {
         Restaurant restaurant = createValidRestaurant();
         User user = new User(1L, "Test", "User", "123", "1234567890", null, "test@email.com", "pass",
-                new RoleDto(ValuesConstants.ID_ROLE_EMPLOYEE, "ADMIN", "Admin"));
+                new RoleDto(ValuesConstants.ID_ROLE_EMPLOYEE, "ADMIN", "Admin"),0L);
 
         when(userServicePort.getUserById(restaurant.getId_owner())).thenReturn(user);
 

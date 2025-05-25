@@ -109,6 +109,26 @@ public class ControllerAdvisor {
                         ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(UserIsNotEmployeeRestaurantException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotHaveIdRestaurant(
+            UserIsNotEmployeeRestaurantException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(NotEmployeeUserException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotEmployee(
+            NotEmployeeUserException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

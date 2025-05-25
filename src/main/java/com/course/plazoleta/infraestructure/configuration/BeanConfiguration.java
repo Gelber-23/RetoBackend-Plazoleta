@@ -17,10 +17,7 @@ import com.course.plazoleta.infraestructure.output.jpa.adapter.CategoryJpaAdapte
 import com.course.plazoleta.infraestructure.output.jpa.adapter.DishJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.OrderJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.RestaurantJpaAdapter;
-import com.course.plazoleta.infraestructure.output.jpa.mapper.ICategoryEntityMapper;
-import com.course.plazoleta.infraestructure.output.jpa.mapper.IDishEntityMapper;
-import com.course.plazoleta.infraestructure.output.jpa.mapper.IOrderEntityMapper;
-import com.course.plazoleta.infraestructure.output.jpa.mapper.IRestaurantEntityMapper;
+import com.course.plazoleta.infraestructure.output.jpa.mapper.*;
 import com.course.plazoleta.infraestructure.output.jpa.repository.*;
 import com.course.plazoleta.infraestructure.utils.UtilsAdapter;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +40,7 @@ public class BeanConfiguration {
     private final IOrderRepository orderRepository;
     private final IOrderEntityMapper orderEntityMapper;
     private final IOrderDishRepository orderDishRepository;
+    private final IOrderDishEntityMapper orderDishEntityMapper;
     private final UtilsAdapter utilsAdapter;
 
     @Bean
@@ -77,12 +75,12 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderPersistencePort orderPersistencePort(){
-        return new OrderJpaAdapter(orderRepository, orderEntityMapper,dishRepository,orderDishRepository);
+        return new OrderJpaAdapter(orderRepository, orderEntityMapper,dishRepository,orderDishRepository,orderDishEntityMapper);
     }
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(orderPersistencePort() , utilsAdapter);
+        return new OrderUseCase(orderPersistencePort() , utilsAdapter, userClientFeignAdapter);
     }
 
 }

@@ -14,7 +14,7 @@ class UserTest {
 
         // Constructor
         User user = new User(1L, "Alice", "Smith", "123456789", "555-1234", birthdate,
-                "alice@example.com", "securePassword", initialRole);
+                "alice@example.com", "securePassword", initialRole,1l);
 
         // Getters
         assertEquals(1L, user.getId());
@@ -26,7 +26,7 @@ class UserTest {
         assertEquals("alice@example.com", user.getEmail());
         assertEquals("securePassword", user.getPassword());
         assertEquals(initialRole, user.getRol());
-
+        assertEquals(1l, user.getIdRestaurant());
         // Setters with new values
         RoleDto newRole = new RoleDto(2, "USER","ROLE");
         Date newBirthdate = new Date(birthdate.getTime() + 10000);
@@ -40,7 +40,7 @@ class UserTest {
         user.setEmail("bob@example.com");
         user.setPassword("newPassword");
         user.setRol(newRole);
-
+        user.setIdRestaurant(2L);
         // Re-assert
         assertEquals(2L, user.getId());
         assertEquals("Bob", user.getName());
@@ -51,6 +51,8 @@ class UserTest {
         assertEquals("bob@example.com", user.getEmail());
         assertEquals("newPassword", user.getPassword());
         assertEquals(newRole, user.getRol());
+
+        assertEquals(2L, user.getIdRestaurant());
     }
 
 }
