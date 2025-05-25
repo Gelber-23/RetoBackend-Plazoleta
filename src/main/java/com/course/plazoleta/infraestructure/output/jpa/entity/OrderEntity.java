@@ -1,32 +1,33 @@
 package com.course.plazoleta.infraestructure.output.jpa.entity;
 
+import com.course.plazoleta.domain.model.OrderDish;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
+
 @Entity
-@Table(name = "dishes")
+@Table(name = "orders")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class DishEntity {
+public class OrderEntity {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column( nullable = false)
-    private Long id;
-    private String name;
+    private Long id ;
+    private Long idClient;
     @ManyToOne
-    @JoinColumn(name = "idCategory", nullable = false)
-    private CategoryEntity idCategory;
-    private String description;
-    private int price;
-    private String urlImage;
-    @ManyToOne
-    @JoinColumn(name = "idRestaurant", nullable = false)
+    @JoinColumn(name = "id_restaurant", nullable = false)
     private RestaurantEntity idRestaurant;
-    private Boolean active;
+    private String state ;
+    private Date date;
+    private Long idChef ;
+
 }

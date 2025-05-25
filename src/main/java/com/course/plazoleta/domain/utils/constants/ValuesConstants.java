@@ -13,4 +13,16 @@ public class ValuesConstants {
 
     public static final String DEFAULT_FIELD_ID_RESTAURANT_PAGINATION = "1";
     public static final String DEFAULT_FIELD_ID_CATEGORY_PAGINATION = "1";
+
+
+    public static final String ROLE_STRING_VALUE_ADMIN = "ROLE_1";
+    public static final String ROLE_STRING_VALUE_OWNER= "ROLE_2";
+    public static final String ROLE_STRING_VALUE_EMPLOYEE= "ROLE_3";
+    public static final String ROLE_STRING_VALUE_CLIENT = "ROLE_4";
+
+    public static final String STATUS_PENDING_ORDER = "PENDING";
+    public static final String STATUS_PREPARATION_ORDER = "IN_PREPARATION";
+    public static final String STATUS_CANCELED_ORDER = "CANCELED";
+    public static final String STATUS_READY_ORDER = "READY";
+    public static final String STATUS_DELIVERED_ORDER = "DELIVERED";
 }

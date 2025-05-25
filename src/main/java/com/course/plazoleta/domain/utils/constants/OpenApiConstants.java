@@ -64,4 +64,12 @@ public class OpenApiConstants {
     public static final String GET_ALL_CATEGORY_TITLE = "Get all categories";
     public static final String GET_ALL_CATEGORY_MESSAGE = "All categories returned";
 
+    // ORDER CONSTANTS API
+    public static final String TITLE_ORDER_REST = "ORDER";
+    public static final String TITLE_DESCRIPTION_ORDER_REST = "Endpoints for orders";
+
+    public static final String NEW_ORDER_TITLE = "Add a new order";
+    public static final String NEW_ORDER_CREATED_MESSAGE = "Order created";
+
+
 }

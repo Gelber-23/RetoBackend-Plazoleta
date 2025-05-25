@@ -1,5 +1,6 @@
 package com.course.plazoleta.infraestructure.security;
 
+import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IDishRepository;
 import com.course.plazoleta.infraestructure.output.jpa.repository.IRestaurantRepository;
 import lombok.AllArgsConstructor;
@@ -12,8 +13,9 @@ import java.util.Optional;
 @Component
 @AllArgsConstructor
 public class PermissionService {
-    private static final String ROLE_ADMIN= "ROLE_1";
-    private static final String ROLE_OWNER= "ROLE_2";
+    private static final String ROLE_ADMIN= ValuesConstants.ROLE_STRING_VALUE_ADMIN;
+    private static final String ROLE_OWNER= ValuesConstants.ROLE_STRING_VALUE_OWNER;
+    private static final String ROLE_CLIENT= ValuesConstants.ROLE_STRING_VALUE_CLIENT;
 
     private final IRestaurantRepository restaurantRepository;
     private final IDishRepository dishRepository;
@@ -31,7 +33,10 @@ public class PermissionService {
         return auth.getAuthorities().stream()
                 .anyMatch(a ->  a.getAuthority().equals(ROLE_OWNER));
     }
-
+    public boolean isClient(Authentication auth) {
+        return auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals(ROLE_CLIENT));
+    }
 
     public boolean isOwnerOfRestaurant(Authentication auth, Long restaurantId) {
         if (!isOwner(auth)) {

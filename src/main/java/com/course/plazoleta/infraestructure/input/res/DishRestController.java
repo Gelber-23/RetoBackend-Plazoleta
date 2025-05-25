@@ -40,7 +40,7 @@ public class DishRestController {
     })
     @PostMapping()
     @PreAuthorize("@permissionService.isOwnerOfRestaurant(authentication, #dishRequest.idRestaurant)")
-    public ResponseEntity<Void> saveDish ( @RequestBody DishRequest dishRequest) {
+    public ResponseEntity<Void> saveDish (@Valid  @RequestBody DishRequest dishRequest) {
         dishHandler.saveDish(dishRequest);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

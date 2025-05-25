@@ -22,4 +22,6 @@ public class ExceptionsConstants {
     public static final String USER_NOT_OWNER_EXCEPTION = "The user must be a owner";
 
     public static final String USER_NOT_OWNER_RESTAURANT_EXCEPTION = "User is not owner of this restaurant";
+    public static final String CLIENT_HAVE_ORDER_ACTIVE_EXCEPTION = "The client already has an active order";
+    public static final String DISH_NOT_FOUND_EXCEPTION = "The dish not exits";
 }
