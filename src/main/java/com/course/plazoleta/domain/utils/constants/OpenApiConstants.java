@@ -74,4 +74,6 @@ public class OpenApiConstants {
     public static final String GET_FILTER_ORDERS_TITLE = "Get orders";
     public static final String GET_FILTER_ORDERS_MESSAGE = "Order returned";
 
+    public static final String TAKE_ORDER_TITLE = "Take Order";
+    public static final String TAKE_ORDER_MESSAGE = "Order taken";
 }

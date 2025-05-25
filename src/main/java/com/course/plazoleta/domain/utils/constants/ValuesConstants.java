@@ -27,4 +27,6 @@ public class ValuesConstants {
     public static final String STATUS_DELIVERED_ORDER = "DELIVERED";
     public static final String DEFAULT_FIELD_ORDER_STATE_PAGINATION = "PENDING";
 
+    public static final String DEFAULT_ID_ORDER_TAKE = "0";
+
 }
