@@ -2,9 +2,9 @@ package com.course.plazoleta.domain.usecase;
 
 import com.course.plazoleta.domain.api.IDishServicePort;
 import com.course.plazoleta.domain.api.IUtilsServicePort;
-import com.course.plazoleta.domain.exception.DishValidationException;
+import com.course.plazoleta.domain.exception.validation.DishValidationException;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
-import com.course.plazoleta.domain.exception.UserIsNotOwnerValidationException;
+import com.course.plazoleta.domain.exception.validation.UserIsNotOwnerValidationException;
 import com.course.plazoleta.domain.model.Dish;
 import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;

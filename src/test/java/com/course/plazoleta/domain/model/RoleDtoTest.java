@@ -1,5 +1,6 @@
 package com.course.plazoleta.domain.model;
 
+import com.course.plazoleta.domain.model.feign.RoleDto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,4 +1,4 @@
-package com.course.plazoleta.domain.exception;
+package com.course.plazoleta.domain.exception.validation;
 
 
 public class UserIsNotOwnerValidationException  extends RuntimeException {

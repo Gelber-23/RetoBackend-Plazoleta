@@ -1,4 +1,4 @@
-package com.course.plazoleta.domain.model;
+package com.course.plazoleta.domain.model.feign;
 
 public class MessageSms {
 

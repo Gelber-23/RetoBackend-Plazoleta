@@ -1,4 +1,4 @@
-package com.course.plazoleta.application.dto.request;
+package com.course.plazoleta.application.dto.request.feign;
 
 
 import com.course.plazoleta.domain.utils.constants.DtoConstants;

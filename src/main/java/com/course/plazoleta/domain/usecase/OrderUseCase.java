@@ -4,9 +4,15 @@ import com.course.plazoleta.domain.api.IOrderServicePort;
 import com.course.plazoleta.domain.api.IUserServicePort;
 import com.course.plazoleta.domain.api.IUtilsServicePort;
 import com.course.plazoleta.domain.exception.*;
+import com.course.plazoleta.domain.exception.usersexception.UserIsNotEmployeeRestaurantException;
+import com.course.plazoleta.domain.exception.validation.OrderValidationException;
 import com.course.plazoleta.domain.model.*;
+import com.course.plazoleta.domain.model.feign.MessageSms;
+import com.course.plazoleta.domain.model.feign.Track;
+import com.course.plazoleta.domain.model.feign.User;
 import com.course.plazoleta.domain.spi.IOrderPersistencePort;
-import com.course.plazoleta.domain.spi.ITwilioClientPort;
+import com.course.plazoleta.domain.spi.feign.ITrackClientPort;
+import com.course.plazoleta.domain.spi.feign.ITwilioClientPort;
 import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 
@@ -19,6 +25,7 @@ public class OrderUseCase implements IOrderServicePort {
     private final IUtilsServicePort utilsServicePort;
     private final IUserServicePort userServicePort;
     private final ITwilioClientPort twilioClientPort;
+    private final ITrackClientPort trackClientPort;
 
     private static final SecureRandom random = new SecureRandom();
 
@@ -27,11 +34,12 @@ public class OrderUseCase implements IOrderServicePort {
             ValuesConstants.STATUS_PREPARATION_ORDER,
             ValuesConstants.STATUS_READY_ORDER
     );
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort, IUserServicePort userServicePort, ITwilioClientPort twilioClientPort) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort, IUserServicePort userServicePort, ITwilioClientPort twilioClientPort, ITrackClientPort trackClientPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.utilsServicePort = utilsServicePort;
         this.userServicePort = userServicePort;
         this.twilioClientPort = twilioClientPort;
+        this.trackClientPort = trackClientPort;
     }
 
     @Override
@@ -53,6 +61,7 @@ public class OrderUseCase implements IOrderServicePort {
 
 
         orderPersistencePort.createOrder(order);
+
     }
 
     @Override
@@ -74,6 +83,8 @@ public class OrderUseCase implements IOrderServicePort {
         order.setState(ValuesConstants.STATUS_PREPARATION_ORDER);
         order.setIdChef(user.getId());
 
+        generateTrack(ValuesConstants.STATUS_PENDING_ORDER , order);
+
         return orderPersistencePort.takeOrder( order );
 
     }
@@ -83,7 +94,7 @@ public class OrderUseCase implements IOrderServicePort {
         validEmployeeUser();
         Order order = validateExistOrder(idOrder);
         if (!Objects.equals(order.getState(), ValuesConstants.STATUS_PREPARATION_ORDER)){
-            throw new NoDataFoundException();
+            throw new NoOrderFoundException();
 
         }
         order.setState(ValuesConstants.STATUS_READY_ORDER);
@@ -100,6 +111,8 @@ public class OrderUseCase implements IOrderServicePort {
 
         order = orderPersistencePort.takeOrder(order);
 
+        generateTrack(ValuesConstants.STATUS_PREPARATION_ORDER , order);
+
         MessageSms messageSms = new MessageSms(phone,message);
         twilioClientPort.sendMessageSms(messageSms);
 
@@ -111,14 +124,14 @@ public class OrderUseCase implements IOrderServicePort {
         validEmployeeUser();
         Order order = validateExistOrder(idOrder);
         if (!Objects.equals(order.getState(), ValuesConstants.STATUS_READY_ORDER)){
-            throw new NoDataFoundException();
+            throw new NoOrderFoundException();
 
         }
         if(!Objects.equals(order.getPin(), pin)) {
             throw new PinNotMatchException();
         }
         order.setState(ValuesConstants.STATUS_DELIVERED_ORDER);
-
+        generateTrack(ValuesConstants.STATUS_READY_ORDER , order);
 
         return orderPersistencePort.takeOrder(order);
     }
@@ -138,6 +151,8 @@ public class OrderUseCase implements IOrderServicePort {
             throw new OrderNotPossibleCancel();
         }
         order.setState(ValuesConstants.STATUS_CANCELED_ORDER );
+        generateTrack(ValuesConstants.STATUS_PENDING_ORDER , order);
+
         return orderPersistencePort.takeOrder(order);
     }
 
@@ -188,10 +203,9 @@ public class OrderUseCase implements IOrderServicePort {
         }
         return order;
     }
-    public static String generateMessage(String client, String pin) {
+    private  String generateMessage(String client, String pin) {
         return String.format(ValuesConstants.MESSAGE_ORDER_READY, client.toUpperCase(), pin);
     }
-
     private  String generatePin() {
         StringBuilder pin = new StringBuilder(ValuesConstants.PIN_LENGTH);
         for (int i = 0; i < ValuesConstants.PIN_LENGTH; i++) {
@@ -199,5 +213,16 @@ public class OrderUseCase implements IOrderServicePort {
             pin.append(ValuesConstants.ALPHABET_CHARACTERS_PIN.charAt(index));
         }
         return pin.toString();
+    }
+    private void generateTrack( String previousState , Order order){
+        Track track = new Track(
+                order.getId(),
+                order.getIdClient(),
+                order.getIdChef(),
+                previousState,
+                order.getState()
+        );
+
+        trackClientPort.createTrack(track);
     }
 }

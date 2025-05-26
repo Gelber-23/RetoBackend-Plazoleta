@@ -1,12 +1,12 @@
 package com.course.plazoleta.domain.usecase;
 
 import com.course.plazoleta.domain.api.IUserServicePort;
-import com.course.plazoleta.domain.exception.RestaurantValidationException;
-import com.course.plazoleta.domain.exception.UserNotOwnerException;
+import com.course.plazoleta.domain.exception.validation.RestaurantValidationException;
+import com.course.plazoleta.domain.exception.usersexception.UserNotOwnerException;
 import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
-import com.course.plazoleta.domain.model.RoleDto;
-import com.course.plazoleta.domain.model.User;
+import com.course.plazoleta.domain.model.feign.RoleDto;
+import com.course.plazoleta.domain.model.feign.User;
 import com.course.plazoleta.domain.spi.IRestaurantPersistencePort;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import org.junit.jupiter.api.Test;

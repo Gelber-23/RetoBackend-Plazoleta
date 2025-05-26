@@ -12,6 +12,7 @@ import com.course.plazoleta.domain.usecase.CategoryUseCase;
 import com.course.plazoleta.domain.usecase.DishUseCase;
 import com.course.plazoleta.domain.usecase.OrderUseCase;
 import com.course.plazoleta.domain.usecase.RestaurantUseCase;
+import com.course.plazoleta.infraestructure.output.feing.track.TrackClientFeignAdapter;
 import com.course.plazoleta.infraestructure.output.feing.twilio.TwilioClientFeignAdapter;
 import com.course.plazoleta.infraestructure.output.feing.user.UserClientFeignAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.CategoryJpaAdapter;
@@ -46,7 +47,7 @@ public class BeanConfiguration {
     private final UtilsAdapter utilsAdapter;
     private final UserClientFeignAdapter userClientFeignAdapter;
     private final TwilioClientFeignAdapter twilioClientFeignAdapter;
-
+    private final TrackClientFeignAdapter trackClientFeignAdapter;
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
         return new RestaurantJpaAdapter(restaurantRepository, restaurantEntityMapper);
@@ -84,7 +85,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(orderPersistencePort() , utilsAdapter, userClientFeignAdapter,twilioClientFeignAdapter);
+        return new OrderUseCase(orderPersistencePort() , utilsAdapter, userClientFeignAdapter,twilioClientFeignAdapter,trackClientFeignAdapter);
     }
 
 }
