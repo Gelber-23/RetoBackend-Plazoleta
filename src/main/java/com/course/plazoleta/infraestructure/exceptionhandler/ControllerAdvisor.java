@@ -2,6 +2,15 @@ package com.course.plazoleta.infraestructure.exceptionhandler;
 
 import com.course.plazoleta.domain.exception.*;
 import com.course.plazoleta.domain.exception.NoDataFoundException;
+import com.course.plazoleta.domain.exception.feing.SmsNotSendException;
+import com.course.plazoleta.domain.exception.feing.TrackNotCreateException;
+import com.course.plazoleta.domain.exception.usersexception.UserIsNotEmployeeRestaurantException;
+import com.course.plazoleta.domain.exception.usersexception.UserNotFoundException;
+import com.course.plazoleta.domain.exception.usersexception.UserNotOwnerException;
+import com.course.plazoleta.domain.exception.validation.DishValidationException;
+import com.course.plazoleta.domain.exception.validation.OrderValidationException;
+import com.course.plazoleta.domain.exception.validation.RestaurantValidationException;
+import com.course.plazoleta.domain.exception.validation.UserIsNotOwnerValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -159,6 +168,25 @@ public class ControllerAdvisor {
     @ExceptionHandler(OrderAlreadyCancelledException.class)
     public ResponseEntity<Map<String, String>> handleOrderAlreadyCancelled(
             OrderAlreadyCancelledException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
+    @ExceptionHandler(TrackNotCreateException.class)
+    public ResponseEntity<Map<String, String>> handleSmsNotSend(
+            TrackNotCreateException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(NoOrderFoundException.class)
+    public ResponseEntity<Map<String, String>> handleOrderNotFound(
+            NoOrderFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Collections.singletonMap(
                         MESSAGE,

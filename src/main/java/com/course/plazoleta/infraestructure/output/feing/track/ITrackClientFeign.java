@@ -1,6 +1,7 @@
-package com.course.plazoleta.infraestructure.output.feing.twilio;
+package com.course.plazoleta.infraestructure.output.feing.track;
 
 import com.course.plazoleta.application.dto.request.feign.MessageSmsRequest;
+import com.course.plazoleta.application.dto.request.feign.TrackRequest;
 import com.course.plazoleta.infraestructure.output.feing.ClientFeignConfig;
 import jakarta.validation.Valid;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -8,12 +9,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
-        name = "messaging",
-        path = "/message/",
+        name = "traceability",
+        path = "/track/",
         configuration = ClientFeignConfig.class
 )
-public interface ITwilioClientFeign {
-
+public interface ITrackClientFeign {
     @PostMapping(("/"))
-    void sendSmsMessage(@Valid @RequestBody MessageSmsRequest messageSmsRequest);
+    void createTrack(@Valid @RequestBody TrackRequest trackRequest);
 }

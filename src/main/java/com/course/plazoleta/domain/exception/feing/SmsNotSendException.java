@@ -1,4 +1,4 @@
-package com.course.plazoleta.domain.exception;
+package com.course.plazoleta.domain.exception.feing;
 
 public class SmsNotSendException extends RuntimeException {
 

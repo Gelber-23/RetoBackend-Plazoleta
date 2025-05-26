@@ -1,6 +1,6 @@
 package com.course.plazoleta.infraestructure.output.feing.user;
 
-import com.course.plazoleta.domain.model.User;
+import com.course.plazoleta.domain.model.feign.User;
 import com.course.plazoleta.infraestructure.output.feing.ClientFeignConfig;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

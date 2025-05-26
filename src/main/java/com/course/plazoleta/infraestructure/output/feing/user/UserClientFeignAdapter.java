@@ -1,8 +1,8 @@
 package com.course.plazoleta.infraestructure.output.feing.user;
 
 import com.course.plazoleta.domain.api.IUserServicePort;
-import com.course.plazoleta.domain.exception.UserNotFoundException;
-import com.course.plazoleta.domain.model.User;
+import com.course.plazoleta.domain.exception.usersexception.UserNotFoundException;
+import com.course.plazoleta.domain.model.feign.User;
 import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

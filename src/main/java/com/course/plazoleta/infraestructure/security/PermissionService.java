@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -49,7 +50,7 @@ public class PermissionService {
         return extractUserId(auth)
                 .flatMap(userId ->
                         restaurantRepository.findById(restaurantId)
-                                .map(rest -> rest.getId_owner() == userId)
+                                .map(rest -> Objects.equals(rest.getId_owner(), userId))
                 )
                 .orElse(false);
     }
@@ -61,7 +62,7 @@ public class PermissionService {
         return extractUserId(auth)
                 .flatMap(userId ->
                         dishRepository.findById(dishId)
-                                .map(d -> d.getIdRestaurant().getId_owner()== userId)
+                                .map(d -> Objects.equals(d.getIdRestaurant().getId_owner(), userId))
                 )
                 .orElse(false);
     }

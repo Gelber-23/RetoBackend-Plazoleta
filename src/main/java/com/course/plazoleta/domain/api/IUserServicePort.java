@@ -1,6 +1,6 @@
 package com.course.plazoleta.domain.api;
 
-import com.course.plazoleta.domain.model.User;
+import com.course.plazoleta.domain.model.feign.User;
 
 public interface IUserServicePort {
 

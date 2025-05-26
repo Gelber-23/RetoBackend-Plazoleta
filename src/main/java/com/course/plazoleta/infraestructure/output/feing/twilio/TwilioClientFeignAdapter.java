@@ -1,10 +1,9 @@
 package com.course.plazoleta.infraestructure.output.feing.twilio;
 
-import com.course.plazoleta.domain.exception.SmsNotSendException;
-import com.course.plazoleta.domain.model.MessageSms;
-import com.course.plazoleta.domain.spi.ITwilioClientPort;
+import com.course.plazoleta.domain.exception.feing.SmsNotSendException;
+import com.course.plazoleta.domain.model.feign.MessageSms;
+import com.course.plazoleta.domain.spi.feign.ITwilioClientPort;
 import com.course.plazoleta.infraestructure.output.feing.twilio.mapper.ITwilioMapper;
-import feign.FeignException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

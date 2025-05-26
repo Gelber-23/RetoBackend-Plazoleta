@@ -1,5 +1,7 @@
 package com.course.plazoleta.domain.model;
 
+import com.course.plazoleta.domain.model.feign.RoleDto;
+import com.course.plazoleta.domain.model.feign.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
