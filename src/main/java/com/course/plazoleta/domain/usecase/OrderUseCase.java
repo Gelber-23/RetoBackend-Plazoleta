@@ -98,12 +98,29 @@ public class OrderUseCase implements IOrderServicePort {
 
         String phone  = user.getPhone();
 
-        //order = orderPersistencePort.takeOrder(order);
+        order = orderPersistencePort.takeOrder(order);
 
         MessageSms messageSms = new MessageSms(phone,message);
         twilioClientPort.sendMessageSms(messageSms);
 
         return order;
+    }
+
+    @Override
+    public Order deliverOrder(Long idOrder, String pin) {
+        validEmployeeUser();
+        Order order = validateExistOrder(idOrder);
+        if (!Objects.equals(order.getState(), ValuesConstants.STATUS_READY_ORDER)){
+            throw new NoDataFoundException();
+
+        }
+        if(!Objects.equals(order.getPin(), pin)) {
+            throw new PinNotMatchException();
+        }
+        order.setState(ValuesConstants.STATUS_DELIVERED_ORDER);
+
+
+        return orderPersistencePort.takeOrder(order);
     }
 
     private void validateOrder(Order order){

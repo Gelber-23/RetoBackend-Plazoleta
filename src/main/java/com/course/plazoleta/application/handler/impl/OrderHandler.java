@@ -35,6 +35,11 @@ public class OrderHandler implements IOrderHandler {
     }
 
     @Override
+    public OrderResponse deliverOrder(Long idOrder,String pin) {
+        return orderResponseMapper.toResponse(orderServicePort.deliverOrder(idOrder,pin) );
+    }
+
+    @Override
     public PageModel<OrderResponse> getOrdersFilterByState(Integer page, Integer pageSize, String state) {
         return orderResponseMapper.toResponsePageList(orderServicePort.getOrdersFilterByState(page,pageSize,state));
     }

@@ -12,4 +12,5 @@ public interface IOrderPersistencePort {
     boolean clientHaveOrderActive (Long idClient, List<String> states);
     Order getOrderById(Long idOrder);
     Order takeOrder (Order order);
+
 }

@@ -33,6 +33,7 @@ public class ValuesConstants {
 
     public static final String MESSAGE_ORDER_READY=
             "Good day, sir/madam %s, your order is now ready for pickup.\n" +
-                    "You need to show the following pin %s to be able to pick up your order.";
+                    "You need to show the following pin: %s to be able to pick up your order.";
 
+    public static final String DEFAULT_PIN_ORDER = "A1";
 }

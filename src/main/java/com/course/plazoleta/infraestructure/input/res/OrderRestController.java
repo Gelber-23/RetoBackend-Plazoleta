@@ -88,4 +88,22 @@ public class OrderRestController {
     ) {
         return ResponseEntity.ok(orderHandler.completeOrderAndNotify(idOrder));
     }
+
+
+    @Operation(summary = OpenApiConstants.DELIVERED_ORDER_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.DELIVERED_ORDER_MESSAGE,
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
+    })
+    @PutMapping("deliverOrder")
+    @PreAuthorize("@permissionService.isEmployee(authentication)")
+    public ResponseEntity<OrderResponse> deliverOrder(
+            @RequestParam(name = "idOrder", defaultValue = ValuesConstants.DEFAULT_ID_ORDER_TAKE) Long idOrder,
+            @RequestParam(name = "pin", defaultValue = ValuesConstants.DEFAULT_PIN_ORDER) String pin
+    ) {
+        return ResponseEntity.ok(orderHandler.deliverOrder(idOrder,pin));
+    }
+
 }
