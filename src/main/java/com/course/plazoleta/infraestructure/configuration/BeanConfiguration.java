@@ -12,7 +12,8 @@ import com.course.plazoleta.domain.usecase.CategoryUseCase;
 import com.course.plazoleta.domain.usecase.DishUseCase;
 import com.course.plazoleta.domain.usecase.OrderUseCase;
 import com.course.plazoleta.domain.usecase.RestaurantUseCase;
-import com.course.plazoleta.infraestructure.output.feing.UserClientFeignAdapter;
+import com.course.plazoleta.infraestructure.output.feing.twilio.TwilioClientFeignAdapter;
+import com.course.plazoleta.infraestructure.output.feing.user.UserClientFeignAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.CategoryJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.DishJpaAdapter;
 import com.course.plazoleta.infraestructure.output.jpa.adapter.OrderJpaAdapter;
@@ -30,7 +31,7 @@ public class BeanConfiguration {
 
     private final IRestaurantRepository restaurantRepository;
     private final IRestaurantEntityMapper restaurantEntityMapper;
-    private final UserClientFeignAdapter userClientFeignAdapter;
+
     private final IDishRepository dishRepository;
     private final IDishEntityMapper dishEntityMapper;
 
@@ -41,7 +42,10 @@ public class BeanConfiguration {
     private final IOrderEntityMapper orderEntityMapper;
     private final IOrderDishRepository orderDishRepository;
     private final IOrderDishEntityMapper orderDishEntityMapper;
+
     private final UtilsAdapter utilsAdapter;
+    private final UserClientFeignAdapter userClientFeignAdapter;
+    private final TwilioClientFeignAdapter twilioClientFeignAdapter;
 
     @Bean
     public IRestaurantPersistencePort restaurantPersistencePort(){
@@ -80,7 +84,7 @@ public class BeanConfiguration {
 
     @Bean
     public IOrderServicePort orderServicePort(){
-        return new OrderUseCase(orderPersistencePort() , utilsAdapter, userClientFeignAdapter);
+        return new OrderUseCase(orderPersistencePort() , utilsAdapter, userClientFeignAdapter,twilioClientFeignAdapter);
     }
 
 }

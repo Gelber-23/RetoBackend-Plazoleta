@@ -30,6 +30,11 @@ public class OrderHandler implements IOrderHandler {
     }
 
     @Override
+    public OrderResponse completeOrderAndNotify(Long idOrder) {
+        return orderResponseMapper.toResponse(orderServicePort.completeOrderAndNotify(idOrder) );
+    }
+
+    @Override
     public PageModel<OrderResponse> getOrdersFilterByState(Integer page, Integer pageSize, String state) {
         return orderResponseMapper.toResponsePageList(orderServicePort.getOrdersFilterByState(page,pageSize,state));
     }

@@ -129,6 +129,15 @@ public class ControllerAdvisor {
                         ex.getMessage()
                 ));
     }
+    @ExceptionHandler(SmsNotSendException.class)
+    public ResponseEntity<Map<String, String>> handleSmsNotSend(
+            SmsNotSendException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

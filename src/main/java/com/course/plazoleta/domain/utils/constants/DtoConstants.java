@@ -31,4 +31,7 @@ public class DtoConstants {
     public static final String DESCRIPTION_SCHEMA_EXAMPLE="Restaurant" ;
 
     public static final String MUST_BE_ONE_DISH= "There must be at least one dish on the list";
+
+    public static final String FIELD_PHONE_REQUIRED = "The phone is required";
+    public static final String FIELD_MESSAGE_REQUIRED = "The message is required";
 }
