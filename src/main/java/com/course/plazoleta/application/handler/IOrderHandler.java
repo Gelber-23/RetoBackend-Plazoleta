@@ -10,6 +10,7 @@ public interface IOrderHandler {
     OrderResponse takeOrder (Long idOrder);
     OrderResponse completeOrderAndNotify (Long idOrder);
     OrderResponse deliverOrder (Long idOrder, String pin);
+    OrderResponse cancelOrder (Long idOrder);
     PageModel<OrderResponse> getOrdersFilterByState(Integer page , Integer pageSize, String state);
 
 }

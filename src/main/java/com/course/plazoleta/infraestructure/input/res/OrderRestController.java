@@ -106,4 +106,21 @@ public class OrderRestController {
         return ResponseEntity.ok(orderHandler.deliverOrder(idOrder,pin));
     }
 
+
+    @Operation(summary = OpenApiConstants.CANCEL_ORDER_TITLE)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = OpenApiConstants.CANCEL_ORDER_MESSAGE,
+                    content = @Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RestaurantResponse.class)))),
+            @ApiResponse(responseCode = "404", description = OpenApiConstants.NO_DATA_MESSAGE , content = @Content)
+    })
+    @PutMapping("cancelOrder")
+    @PreAuthorize("@permissionService.isClient(authentication)")
+    public ResponseEntity<OrderResponse> cancelOrder(
+            @RequestParam(name = "idOrder", defaultValue = ValuesConstants.DEFAULT_ID_ORDER_TAKE) Long idOrder
+
+    ) {
+        return ResponseEntity.ok(orderHandler.cancelOrder(idOrder));
+    }
+
 }

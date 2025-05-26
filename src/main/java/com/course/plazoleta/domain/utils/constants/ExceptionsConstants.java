@@ -28,4 +28,7 @@ public class ExceptionsConstants {
     public static final String NOT_EMPLOYEE_RESTAURANT_USER_EXCEPTION = "The user not have id restaurant";
 
     public static final String PIN_NOT_MATCH_EXCEPTION = "The Pin does not match the one on the order";
+    public static final String NOT_CLIENT_OF_THIS_ORDER_EXCEPTION = "You are not the client register in this order";
+    public static final String NOT_POSSIBLE_CANCEL_ORDER_EXCEPTION = "Sorry, your order is already being prepared and cannot be cancelled.";
+    public static final String ORDER_ALREADY_CANCELLED_EXCEPTION = "The order was already cancelled";
 }
