@@ -28,5 +28,11 @@ public class ValuesConstants {
     public static final String DEFAULT_FIELD_ORDER_STATE_PAGINATION = "PENDING";
 
     public static final String DEFAULT_ID_ORDER_TAKE = "0";
+    public static final String ALPHABET_CHARACTERS_PIN = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    public static final int PIN_LENGTH = 5;
+
+    public static final String MESSAGE_ORDER_READY=
+            "Good day, sir/madam %s, your order is now ready for pickup.\n" +
+                    "You need to show the following pin %s to be able to pick up your order.";
 
 }

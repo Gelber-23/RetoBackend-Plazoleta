@@ -6,9 +6,11 @@ import com.course.plazoleta.domain.api.IUtilsServicePort;
 import com.course.plazoleta.domain.exception.*;
 import com.course.plazoleta.domain.model.*;
 import com.course.plazoleta.domain.spi.IOrderPersistencePort;
+import com.course.plazoleta.domain.spi.ITwilioClientPort;
 import com.course.plazoleta.domain.utils.constants.DtoConstants;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 
+import java.security.SecureRandom;
 import java.util.*;
 
 public class OrderUseCase implements IOrderServicePort {
@@ -16,17 +18,20 @@ public class OrderUseCase implements IOrderServicePort {
     private final IOrderPersistencePort orderPersistencePort;
     private final IUtilsServicePort utilsServicePort;
     private final IUserServicePort userServicePort;
+    private final ITwilioClientPort twilioClientPort;
 
+    private static final SecureRandom random = new SecureRandom();
 
     private static final List<String> ACTIVE_STATES_ORDER = Arrays.asList(
             ValuesConstants.STATUS_PENDING_ORDER,
             ValuesConstants.STATUS_PREPARATION_ORDER,
             ValuesConstants.STATUS_READY_ORDER
     );
-    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort, IUserServicePort userServicePort) {
+    public OrderUseCase(IOrderPersistencePort orderPersistencePort, IUtilsServicePort utilsServicePort, IUserServicePort userServicePort, ITwilioClientPort twilioClientPort) {
         this.orderPersistencePort = orderPersistencePort;
         this.utilsServicePort = utilsServicePort;
         this.userServicePort = userServicePort;
+        this.twilioClientPort = twilioClientPort;
     }
 
     @Override
@@ -61,11 +66,7 @@ public class OrderUseCase implements IOrderServicePort {
     @Override
     public Order takeOrder(Long idOrder) {
         User user = validEmployeeUser();
-        Order order = orderPersistencePort.getOrderById(idOrder);
-        if (order == null){
-            throw new NoDataFoundException();
-
-        }
+        Order order =validateExistOrder(idOrder);
         if (!Objects.equals(order.getState(), ValuesConstants.STATUS_PENDING_ORDER)){
             throw new NoDataFoundException();
 
@@ -77,7 +78,35 @@ public class OrderUseCase implements IOrderServicePort {
 
     }
 
-    public void validateOrder(Order order){
+    @Override
+    public Order completeOrderAndNotify(Long idOrder) {
+        validEmployeeUser();
+        Order order = validateExistOrder(idOrder);
+        if (!Objects.equals(order.getState(), ValuesConstants.STATUS_PREPARATION_ORDER)){
+            throw new NoDataFoundException();
+
+        }
+        order.setState(ValuesConstants.STATUS_READY_ORDER);
+        order.setPin(generatePin());
+
+        User user = userServicePort.getUserById(order.getIdClient());
+        if (user == null){
+            throw new NoDataFoundException();
+
+        }
+        String message = generateMessage(user.getName() , order.getPin()) ;
+
+        String phone  = user.getPhone();
+
+        //order = orderPersistencePort.takeOrder(order);
+
+        MessageSms messageSms = new MessageSms(phone,message);
+        twilioClientPort.sendMessageSms(messageSms);
+
+        return order;
+    }
+
+    private void validateOrder(Order order){
         List<String> errors = new ArrayList<>();
         if (order.getDishes() == null || order.getDishes().isEmpty()) {
             errors.add(DtoConstants.MUST_BE_ONE_DISH);
@@ -104,8 +133,7 @@ public class OrderUseCase implements IOrderServicePort {
             throw new OrderValidationException(errors);
         }
     }
-
-    public User validEmployeeUser(){
+    private User validEmployeeUser(){
         long idUser = utilsServicePort.getCurrentUserId();
         User user = userServicePort.getUserById(idUser);
 
@@ -116,5 +144,25 @@ public class OrderUseCase implements IOrderServicePort {
             throw new UserIsNotEmployeeRestaurantException();
 
         return user;
+    }
+    private Order validateExistOrder(Long idOrder){
+        Order order = orderPersistencePort.getOrderById(idOrder);
+        if (order == null || order.getId()<= 0){
+            throw new NoDataFoundException();
+
+        }
+        return order;
+    }
+    public static String generateMessage(String client, String pin) {
+        return String.format(ValuesConstants.MESSAGE_ORDER_READY, client.toUpperCase(), pin);
+    }
+
+    private  String generatePin() {
+        StringBuilder pin = new StringBuilder(ValuesConstants.PIN_LENGTH);
+        for (int i = 0; i < ValuesConstants.PIN_LENGTH; i++) {
+            int index = random.nextInt(ValuesConstants.ALPHABET_CHARACTERS_PIN.length());
+            pin.append(ValuesConstants.ALPHABET_CHARACTERS_PIN.charAt(index));
+        }
+        return pin.toString();
     }
 }

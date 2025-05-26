@@ -9,4 +9,6 @@ public interface IOrderServicePort {
 
     PageModel<Order> getOrdersFilterByState(Integer page , Integer pageSize, String state);
     Order takeOrder (Long idOrder);
+
+    Order completeOrderAndNotify (Long idOrder);
 }

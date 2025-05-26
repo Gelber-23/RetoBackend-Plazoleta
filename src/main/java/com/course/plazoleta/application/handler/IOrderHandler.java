@@ -9,6 +9,7 @@ public interface IOrderHandler {
 
     void createOrder (OrderCreateRequest orderCreateRequest);
     OrderResponse takeOrder (Long idOrder);
+    OrderResponse completeOrderAndNotify (Long idOrder);
     PageModel<OrderResponse> getOrdersFilterByState(Integer page , Integer pageSize, String state);
 
 }
