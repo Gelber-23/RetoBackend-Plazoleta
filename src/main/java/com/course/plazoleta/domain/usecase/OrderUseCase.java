@@ -123,6 +123,24 @@ public class OrderUseCase implements IOrderServicePort {
         return orderPersistencePort.takeOrder(order);
     }
 
+    @Override
+    public Order cancelOrder(Long idOrder) {
+        long idUser = utilsServicePort.getCurrentUserId();
+        Order order = validateExistOrder(idOrder);
+
+        if ( order.getIdClient() != idUser){
+            throw new NotTheClientThisOrderException();
+        }
+        if (Objects.equals(order.getState(), ValuesConstants.STATUS_CANCELED_ORDER)){
+            throw new OrderAlreadyCancelledException();
+        }
+        if (!Objects.equals(order.getState(), ValuesConstants.STATUS_PENDING_ORDER)){
+            throw new OrderNotPossibleCancel();
+        }
+        order.setState(ValuesConstants.STATUS_CANCELED_ORDER );
+        return orderPersistencePort.takeOrder(order);
+    }
+
     private void validateOrder(Order order){
         List<String> errors = new ArrayList<>();
         if (order.getDishes() == null || order.getDishes().isEmpty()) {

@@ -147,6 +147,24 @@ public class ControllerAdvisor {
                         ex.getMessage()
                 ));
     }
+    @ExceptionHandler(OrderNotPossibleCancel.class)
+    public ResponseEntity<Map<String, String>> handleNotPossibleCancelOrder(
+            OrderNotPossibleCancel ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
+    @ExceptionHandler(OrderAlreadyCancelledException.class)
+    public ResponseEntity<Map<String, String>> handleOrderAlreadyCancelled(
+            OrderAlreadyCancelledException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap(
+                        MESSAGE,
+                        ex.getMessage()
+                ));
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
