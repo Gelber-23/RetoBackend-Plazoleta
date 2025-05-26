@@ -79,4 +79,7 @@ public class OpenApiConstants {
 
     public static final String COMPLETE_ORDER_TITLE = "Complete Order";
     public static final String COMPLETE_ORDER_MESSAGE = "Order completed";
+
+    public static final String DELIVERED_ORDER_TITLE = "Deliver Order";
+    public static final String DELIVERED_ORDER_MESSAGE = "Order delivered";
 }

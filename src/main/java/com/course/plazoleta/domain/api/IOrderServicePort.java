@@ -11,4 +11,6 @@ public interface IOrderServicePort {
     Order takeOrder (Long idOrder);
 
     Order completeOrderAndNotify (Long idOrder);
+
+    Order deliverOrder(Long idOrder, String pin);
 }

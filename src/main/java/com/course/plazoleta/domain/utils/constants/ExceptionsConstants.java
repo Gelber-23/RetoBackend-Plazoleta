@@ -25,5 +25,7 @@ public class ExceptionsConstants {
     public static final String CLIENT_HAVE_ORDER_ACTIVE_EXCEPTION = "The client already has an active order";
     public static final String DISH_NOT_FOUND_EXCEPTION = "The dish not exits";
     public static final String NOT_EMPLOYEE_USER_EXCEPTION = "The user is not a employee";
-    public static final String NOT_EMPLOYEE_RESTAURANT_USER_EXCEPTION = "The user not have id resturant";
+    public static final String NOT_EMPLOYEE_RESTAURANT_USER_EXCEPTION = "The user not have id restaurant";
+
+    public static final String PIN_NOT_MATCH_EXCEPTION = "The Pin does not match the one on the order";
 }
