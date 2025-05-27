@@ -1,6 +1,7 @@
 package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
+import com.course.plazoleta.application.dto.response.RestaurantCompleteResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IRestaurantHandler;
 import com.course.plazoleta.domain.model.PageModel;
@@ -44,11 +45,11 @@ class RestaurantRestControllerTest {
     void getRestaurantById_shouldReturnRestaurant() {
 
         long id = 1L;
-        RestaurantResponse expectedResponse = new RestaurantResponse();
+        RestaurantCompleteResponse expectedResponse = new RestaurantCompleteResponse();
         when(restaurantHandler.getRestaurantById(id)).thenReturn(expectedResponse);
 
 
-        ResponseEntity<RestaurantResponse> response = restaurantRestController.getRestaurantById(id);
+        ResponseEntity<RestaurantCompleteResponse> response = restaurantRestController.getRestaurantById(id);
 
 
         verify(restaurantHandler).getRestaurantById(id);

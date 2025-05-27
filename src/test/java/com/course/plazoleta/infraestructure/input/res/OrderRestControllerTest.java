@@ -59,4 +59,57 @@ class OrderRestControllerTest {
         assertEquals(expected, response.getBody());
         verify(orderHandler).getOrdersFilterByState(page, pageSize, state);
     }
+
+    @Test
+    void takeOrder_shouldReturnOk() {
+        Long idOrder = 1L;
+        OrderResponse expectedResponse = new OrderResponse();
+        when(orderHandler.takeOrder(idOrder)).thenReturn(expectedResponse);
+
+        ResponseEntity<OrderResponse> response = orderRestController.takeOrder(idOrder);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+        verify(orderHandler).takeOrder(idOrder);
+    }
+
+    @Test
+    void completeOrderAndNotify_shouldReturnOk() {
+        Long idOrder = 2L;
+        OrderResponse expectedResponse = new OrderResponse();
+        when(orderHandler.completeOrderAndNotify(idOrder)).thenReturn(expectedResponse);
+
+        ResponseEntity<OrderResponse> response = orderRestController.completeOrderAndNotify(idOrder);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+        verify(orderHandler).completeOrderAndNotify(idOrder);
+    }
+
+    @Test
+    void deliverOrder_shouldReturnOk() {
+        Long idOrder = 3L;
+        String pin = "1234";
+        OrderResponse expectedResponse = new OrderResponse();
+        when(orderHandler.deliverOrder(idOrder, pin)).thenReturn(expectedResponse);
+
+        ResponseEntity<OrderResponse> response = orderRestController.deliverOrder(idOrder, pin);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+        verify(orderHandler).deliverOrder(idOrder, pin);
+    }
+
+    @Test
+    void cancelOrder_shouldReturnOk() {
+        Long idOrder = 4L;
+        OrderResponse expectedResponse = new OrderResponse();
+        when(orderHandler.cancelOrder(idOrder)).thenReturn(expectedResponse);
+
+        ResponseEntity<OrderResponse> response = orderRestController.cancelOrder(idOrder);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedResponse, response.getBody());
+        verify(orderHandler).cancelOrder(idOrder);
+    }
 }

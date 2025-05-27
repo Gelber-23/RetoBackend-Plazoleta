@@ -1,6 +1,7 @@
 package com.course.plazoleta.infraestructure.input.res;
 
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
+import com.course.plazoleta.application.dto.response.RestaurantCompleteResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IRestaurantHandler;
 import com.course.plazoleta.domain.model.PageModel;
@@ -49,7 +50,7 @@ public class RestaurantRestController {
     })
     @GetMapping("{id}")
     @PreAuthorize("@permissionService.isAdminOrOwner(authentication)")
-    public ResponseEntity<RestaurantResponse> getRestaurantById(@PathVariable(value = "id") long id) {
+    public ResponseEntity<RestaurantCompleteResponse> getRestaurantById(@PathVariable(value = "id") long id) {
         return  ResponseEntity.ok(restaurantHandler.getRestaurantById(id));
     }
 

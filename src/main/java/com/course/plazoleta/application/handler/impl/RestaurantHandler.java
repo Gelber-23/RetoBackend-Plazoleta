@@ -1,6 +1,7 @@
 package com.course.plazoleta.application.handler.impl;
 
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
+import com.course.plazoleta.application.dto.response.RestaurantCompleteResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.handler.IRestaurantHandler;
 import com.course.plazoleta.application.mapper.request.IRestaurantRequestMapper;
@@ -29,9 +30,9 @@ public class RestaurantHandler implements IRestaurantHandler {
     }
 
     @Override
-    public RestaurantResponse getRestaurantById(long id) {
+    public RestaurantCompleteResponse getRestaurantById(long id) {
         Restaurant restaurant = restaurantServicePort.getRestaurantById(id);
-        return restaurantResponseMapper.toResponse(restaurant);
+        return restaurantResponseMapper.toCompleteResponse(restaurant);
 
     }
 

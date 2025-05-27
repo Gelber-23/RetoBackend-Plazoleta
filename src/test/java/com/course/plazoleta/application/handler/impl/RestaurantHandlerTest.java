@@ -1,6 +1,7 @@
 package com.course.plazoleta.application.handler.impl;
 
 import com.course.plazoleta.application.dto.request.RestaurantRequest;
+import com.course.plazoleta.application.dto.response.RestaurantCompleteResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.application.mapper.request.IRestaurantRequestMapper;
 import com.course.plazoleta.application.mapper.response.IRestaurantResponseMapper;
@@ -46,16 +47,16 @@ class RestaurantHandlerTest {
     void getRestaurantById_returnsMappedResponse() {
         long id = 1L;
         Restaurant restaurant = new Restaurant();
-        RestaurantResponse expectedResponse = new RestaurantResponse();
+        RestaurantCompleteResponse expectedResponse = new RestaurantCompleteResponse();
 
         when(restaurantServicePort.getRestaurantById(id)).thenReturn(restaurant);
-        when(restaurantResponseMapper.toResponse(restaurant)).thenReturn(expectedResponse);
+        when(restaurantResponseMapper.toCompleteResponse(restaurant)).thenReturn(expectedResponse);
 
-        RestaurantResponse result = restaurantHandler.getRestaurantById(id);
+        RestaurantCompleteResponse result = restaurantHandler.getRestaurantById(id);
 
         assertEquals(expectedResponse, result);
         verify(restaurantServicePort).getRestaurantById(id);
-        verify(restaurantResponseMapper).toResponse(restaurant);
+        verify(restaurantResponseMapper).toCompleteResponse(restaurant);
     }
 
     @Test
