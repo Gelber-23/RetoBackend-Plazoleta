@@ -20,6 +20,9 @@ public class TrackRequest {
     @NotNull(message = DtoConstants.ID_EMPLOYEE_REQUIRED_MESSAGE)
     @Min(value = ValuesConstants.MIN_VALUE_FOR_NUMBERS, message = DtoConstants.ID_EMPLOYEE_REQUIRED_MESSAGE)
     private Long idEmployee;
+    @NotNull(message = DtoConstants.ID_EMPLOYEE_REQUIRED_MESSAGE)
+    @Min(value = ValuesConstants.MIN_VALUE_FOR_NUMBERS, message = DtoConstants.ID_EMPLOYEE_REQUIRED_MESSAGE)
+    private Long idRestaurant;
     @NotBlank(message = DtoConstants.PREVIOUS_STATE_REQUIRED_MESSAGE)
     private String previousState;
     @NotBlank(message = DtoConstants.NEW_STATE_REQUIRED_MESSAGE)

@@ -1,5 +1,6 @@
 package com.course.plazoleta.application.mapper.response;
 
+import com.course.plazoleta.application.dto.response.RestaurantCompleteResponse;
 import com.course.plazoleta.application.dto.response.RestaurantResponse;
 import com.course.plazoleta.domain.model.PageModel;
 import com.course.plazoleta.domain.model.Restaurant;
@@ -11,5 +12,6 @@ import org.mapstruct.ReportingPolicy;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface IRestaurantResponseMapper {
     RestaurantResponse toResponse(Restaurant restaurant);
+    RestaurantCompleteResponse toCompleteResponse (Restaurant restaurant);
     PageModel<RestaurantResponse> toResponseList(PageModel<Restaurant> restaurantList);
 }

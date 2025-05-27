@@ -109,12 +109,14 @@ public class OrderUseCase implements IOrderServicePort {
 
         String phone  = user.getPhone();
 
+        MessageSms messageSms = new MessageSms(phone,message);
+        twilioClientPort.sendMessageSms(messageSms);
+
         order = orderPersistencePort.takeOrder(order);
 
         generateTrack(ValuesConstants.STATUS_PREPARATION_ORDER , order);
 
-        MessageSms messageSms = new MessageSms(phone,message);
-        twilioClientPort.sendMessageSms(messageSms);
+
 
         return order;
     }
@@ -219,6 +221,7 @@ public class OrderUseCase implements IOrderServicePort {
                 order.getId(),
                 order.getIdClient(),
                 order.getIdChef(),
+                order.getIdRestaurant(),
                 previousState,
                 order.getState()
         );

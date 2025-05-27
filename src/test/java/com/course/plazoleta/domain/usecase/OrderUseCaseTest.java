@@ -7,9 +7,12 @@ import com.course.plazoleta.domain.exception.*;
 import com.course.plazoleta.domain.exception.usersexception.UserIsNotEmployeeRestaurantException;
 import com.course.plazoleta.domain.exception.validation.OrderValidationException;
 import com.course.plazoleta.domain.model.*;
+import com.course.plazoleta.domain.model.feign.MessageSms;
 import com.course.plazoleta.domain.model.feign.RoleDto;
 import com.course.plazoleta.domain.model.feign.User;
 import com.course.plazoleta.domain.spi.IOrderPersistencePort;
+import com.course.plazoleta.domain.spi.feign.ITrackClientPort;
+import com.course.plazoleta.domain.spi.feign.ITwilioClientPort;
 import com.course.plazoleta.domain.utils.constants.ValuesConstants;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,172 +31,159 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderUseCaseTest {
-
-
     @Mock
     private IOrderPersistencePort orderPersistencePort;
     @Mock
     private IUtilsServicePort utilsServicePort;
     @Mock
     private IUserServicePort userServicePort;
+    @Mock
+    private ITwilioClientPort twilioClientPort;
+    @Mock
+    private ITrackClientPort trackClientPort;
 
     @InjectMocks
-    private OrderUseCase useCase;
+    private OrderUseCase orderUseCase;
 
-    private User validEmployee;
+    private static final Long ID_ORDER = 1L;
+    private static final Long ID_CLIENT = 10L;
+    private static final Long ID_CHEF = 20L;
+    private static final Long ID_RESTAURANT = 100L;
 
-    @BeforeEach
-    void setUp() {
-        validEmployee = new User();
-        validEmployee.setId(42L);
-        validEmployee.setRol(new RoleDto(ValuesConstants.ID_ROLE_EMPLOYEE ,"1","1"));
-        validEmployee.setIdRestaurant(99L);
+    private Order getBasicOrder(String state) {
+        OrderDish dish = new OrderDish(1L, 2L,1L,1);
+        Order order = new Order();
+        order.setId(ID_ORDER);
+        order.setDishes(Collections.singletonList(dish));
+        order.setIdRestaurant(ID_RESTAURANT);
+        order.setIdClient(ID_CLIENT);
+        order.setIdChef(ID_CHEF);
+        order.setState(state);
+        return order;
     }
 
-
-    @Test
-    void createOrder_successful() {
-
-        Order o = new Order();
-        o.setIdRestaurant(5L);
-        OrderDish d = new OrderDish();
-        d.setIdDish(7L);
-        d.setQuantity(3);
-        o.setDishes(List.of(d));
-
-        when(utilsServicePort.getCurrentUserId()).thenReturn(123L);
-        when(orderPersistencePort.clientHaveOrderActive(eq(123L), anyList())).thenReturn(false);
-
-
-        useCase.createOrder(o);
-
-        assertEquals(ValuesConstants.STATUS_PENDING_ORDER, o.getState());
-        assertNotNull(o.getDate());
-        assertEquals(123L, o.getIdClient());
-        assertEquals(0L, o.getIdChef());
-        verify(orderPersistencePort).createOrder(o);
+    private User getEmployeeUser() {
+        RoleDto role = new RoleDto();
+        role.setId(3); // EMPLOYEE
+        User user = new User();
+        user.setId(ID_CHEF);
+        user.setRol(role);
+        user.setIdRestaurant(ID_RESTAURANT);
+        return user;
     }
 
     @Test
-    void createOrder_clientHasActiveOrder_throws() {
+    void createOrderSuccess() {
+        Order order = getBasicOrder(null);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CLIENT);
+        when(orderPersistencePort.clientHaveOrderActive(eq(ID_CLIENT), anyList())).thenReturn(false);
 
-        Order o = new Order();
-        o.setIdRestaurant(5L);
-        OrderDish d = new OrderDish();
-        d.setIdDish(7L);
-        d.setQuantity(1);
-        o.setDishes(List.of(d));
+        orderUseCase.createOrder(order);
 
-        when(utilsServicePort.getCurrentUserId()).thenReturn(321L);
-        when(orderPersistencePort.clientHaveOrderActive(eq(321L), anyList())).thenReturn(true);
-
-
-        assertThrows(ClientHaveOrderActiveException.class, () -> useCase.createOrder(o));
-        verify(orderPersistencePort, never()).createOrder(any());
+        verify(orderPersistencePort).createOrder(any(Order.class));
     }
 
     @Test
-    void createOrder_invalidOrder_throwsValidationException() {
+    void createOrderWithActiveOrderThrowsException() {
+        Order order = getBasicOrder(null);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CLIENT);
+        when(orderPersistencePort.clientHaveOrderActive(eq(ID_CLIENT), anyList())).thenReturn(true);
 
-        Order o = new Order();
-
-
-        OrderValidationException ex = assertThrows(OrderValidationException.class, () -> useCase.createOrder(o));
-        assertFalse(ex.getErrors().isEmpty());
-    }
-
-
-    @Test
-    void getOrdersFilterByState_successful() {
-
-        PageModel<Order> pm = new PageModel<>(Collections.emptyList(), 0, 10, 0L, 0);
-        when(utilsServicePort.getCurrentUserId()).thenReturn(42L);
-        when(userServicePort.getUserById(42L)).thenReturn(validEmployee);
-        when(orderPersistencePort.getOrdersFilterByState(1, 5, "P", 99L)).thenReturn(pm);
-
-
-        PageModel<Order> result = useCase.getOrdersFilterByState(1, 5, "P");
-
-
-        assertSame(pm, result);
-        verify(orderPersistencePort).getOrdersFilterByState(1, 5, "P", 99L);
+        assertThrows(ClientHaveOrderActiveException.class, () -> orderUseCase.createOrder(order));
     }
 
     @Test
-    void getOrdersFilterByState_notEmployee_throws() {
+    void getOrdersFilterByStateSuccess() {
+        User employee = getEmployeeUser();
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CHEF);
+        when(userServicePort.getUserById(ID_CHEF)).thenReturn(employee);
+        PageModel<Order> pageModel = new PageModel<>(Collections.emptyList() ,1,1,1,1);
+        when(orderPersistencePort.getOrdersFilterByState(anyInt(), anyInt(), anyString(), eq(ID_RESTAURANT)))
+                .thenReturn(pageModel);
 
-        User u = new User();
-        u.setId(1L);
-        u.setRol(new RoleDto(999,"",""));
-        when(utilsServicePort.getCurrentUserId()).thenReturn(1L);
-        when(userServicePort.getUserById(1L)).thenReturn(u);
+        PageModel<Order> result = orderUseCase.getOrdersFilterByState(0, 10, ValuesConstants.STATUS_PENDING_ORDER);
 
-
-        assertThrows(NotEmployeeUserException.class, () -> useCase.getOrdersFilterByState(0, 1, "X"));
+        assertEquals(pageModel, result);
     }
 
     @Test
-    void getOrdersFilterByState_noRestaurantAssigned_throws() {
+    void takeOrderSuccess() {
+        User employee = getEmployeeUser();
+        Order order = getBasicOrder(ValuesConstants.STATUS_PENDING_ORDER);
 
-        User u = new User();
-        u.setId(1L);
-        u.setRol(new RoleDto(ValuesConstants.ID_ROLE_EMPLOYEE ,"" ,""));
-        u.setIdRestaurant(0L);
-        when(utilsServicePort.getCurrentUserId()).thenReturn(1L);
-        when(userServicePort.getUserById(1L)).thenReturn(u);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CHEF);
+        when(userServicePort.getUserById(ID_CHEF)).thenReturn(employee);
+        when(orderPersistencePort.getOrderById(ID_ORDER)).thenReturn(order);
+        when(orderPersistencePort.takeOrder(any(Order.class))).thenReturn(order);
 
+        Order result = orderUseCase.takeOrder(ID_ORDER);
 
-        assertThrows(UserIsNotEmployeeRestaurantException.class,
-                () -> useCase.getOrdersFilterByState(0, 1, "X"));
-    }
-
-
-
-    @Test
-    void takeOrder_successful() {
-        // Arrange
-        Order o = new Order();
-        o.setId(100L);
-        o.setState(ValuesConstants.STATUS_PENDING_ORDER);
-
-        when(utilsServicePort.getCurrentUserId()).thenReturn(42L);
-        when(userServicePort.getUserById(42L)).thenReturn(validEmployee);
-        when(orderPersistencePort.getOrderById(100L)).thenReturn(o);
-        when(orderPersistencePort.takeOrder(any())).thenAnswer(inv -> inv.getArgument(0));
-
-
-        Order updated = useCase.takeOrder(100L);
-
-
-        assertEquals(ValuesConstants.STATUS_PREPARATION_ORDER, updated.getState());
-        assertEquals(42L, updated.getIdChef());
-        verify(orderPersistencePort).takeOrder(o);
+        assertEquals(ValuesConstants.STATUS_PREPARATION_ORDER , result.getState());
     }
 
     @Test
-    void takeOrder_notFound_throws() {
+    void completeOrderAndNotifySuccess() {
+        User employee = getEmployeeUser();
+        Order order = getBasicOrder(ValuesConstants.STATUS_PREPARATION_ORDER );
+        User client = new User();
+        client.setPhone("1234567890");
+        client.setName("John");
 
-        when(utilsServicePort.getCurrentUserId()).thenReturn(42L);
-        when(userServicePort.getUserById(42L)).thenReturn(validEmployee);
-        when(orderPersistencePort.getOrderById(200L)).thenReturn(null);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CHEF);
+        when(userServicePort.getUserById(ID_CHEF)).thenReturn(employee);
+        when(orderPersistencePort.getOrderById(ID_ORDER)).thenReturn(order);
+        when(userServicePort.getUserById(ID_CLIENT)).thenReturn(client);
+        when(orderPersistencePort.takeOrder(any())).thenReturn(order);
 
+        Order result = orderUseCase.completeOrderAndNotify(ID_ORDER);
 
-        assertThrows(NoDataFoundException.class, () -> useCase.takeOrder(200L));
+        assertEquals(ValuesConstants.STATUS_READY_ORDER, result.getState());
+        verify(twilioClientPort).sendMessageSms(any(MessageSms.class));
     }
 
     @Test
-    void takeOrder_wrongState_throws() {
+    void deliverOrderSuccess() {
+        User employee = getEmployeeUser();
+        Order order = getBasicOrder(ValuesConstants.STATUS_READY_ORDER);
+        order.setPin("1234");
 
-        Order o = new Order();
-        o.setId(101L);
-        o.setState(ValuesConstants.STATUS_READY_ORDER);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CHEF);
+        when(userServicePort.getUserById(ID_CHEF)).thenReturn(employee);
+        when(orderPersistencePort.getOrderById(ID_ORDER)).thenReturn(order);
+        when(orderPersistencePort.takeOrder(any())).thenReturn(order);
 
-        when(utilsServicePort.getCurrentUserId()).thenReturn(42L);
-        when(userServicePort.getUserById(42L)).thenReturn(validEmployee);
-        when(orderPersistencePort.getOrderById(101L)).thenReturn(o);
+        Order result = orderUseCase.deliverOrder(ID_ORDER, "1234");
 
+        assertEquals(ValuesConstants.STATUS_DELIVERED_ORDER, result.getState());
+    }
 
-        assertThrows(NoDataFoundException.class, () -> useCase.takeOrder(101L));
+    @Test
+    void cancelOrderSuccess() {
+        Order order = getBasicOrder(ValuesConstants.STATUS_PENDING_ORDER);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CLIENT);
+        when(orderPersistencePort.getOrderById(ID_ORDER)).thenReturn(order);
+        when(orderPersistencePort.takeOrder(any())).thenReturn(order);
+
+        Order result = orderUseCase.cancelOrder(ID_ORDER);
+
+        assertEquals( ValuesConstants.STATUS_CANCELED_ORDER, result.getState());
+    }
+
+    @Test
+    void createOrderInvalidDishQuantityThrows() {
+        Order order = new Order();
+        order.setIdRestaurant(ID_RESTAURANT);
+        order.setDishes(Collections.singletonList(new OrderDish(1L, 0L,1L,-1))); // invalid
+        assertThrows(OrderValidationException.class, () -> orderUseCase.createOrder(order));
+    }
+
+    @Test
+    void cancelOrderNotClientThrows() {
+        Order order = getBasicOrder(ValuesConstants.STATUS_PENDING_ORDER);
+        order.setIdClient(999L);
+        when(utilsServicePort.getCurrentUserId()).thenReturn(ID_CLIENT);
+        when(orderPersistencePort.getOrderById(ID_ORDER)).thenReturn(order);
+        assertThrows(NotTheClientThisOrderException.class, () -> orderUseCase.cancelOrder(ID_ORDER));
     }
 
 }

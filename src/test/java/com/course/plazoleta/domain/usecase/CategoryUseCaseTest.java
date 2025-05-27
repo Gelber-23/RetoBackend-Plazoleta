@@ -62,5 +62,20 @@ class CategoryUseCaseTest {
         verify(categoryPersistencePort).getAllCategories();
     }
 
+    @Test
+    void getCategoryById_shouldReturnCategory() {
+        long categoryId = 1L;
+        Category expectedCategory = new Category();
+        expectedCategory.setId(categoryId);
+        expectedCategory.setName("Main");
 
+        when(categoryPersistencePort.getCategoryById(categoryId)).thenReturn(expectedCategory);
+
+        Category result = categoryUseCase.getCategoryById(categoryId);
+
+        assertNotNull(result);
+        assertEquals(categoryId, result.getId());
+        assertEquals("Main", result.getName());
+        verify(categoryPersistencePort).getCategoryById(categoryId);
+    }
 }

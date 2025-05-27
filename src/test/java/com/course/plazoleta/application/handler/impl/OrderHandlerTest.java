@@ -64,5 +64,61 @@ class OrderHandlerTest {
         verify(orderServicePort).getOrdersFilterByState(page, pageSize, state);
         verify(orderResponseMapper).toResponsePageList(servicePage);
     }
+    @Test
+    void takeOrder_shouldReturnMappedResponse() {
+        Long idOrder = 1L;
+        Order order = new Order();
+        OrderResponse response = new OrderResponse();
+
+        when(orderServicePort.takeOrder(idOrder)).thenReturn(order);
+        when(orderResponseMapper.toResponse(order)).thenReturn(response);
+
+        OrderResponse result = orderHandler.takeOrder(idOrder);
+
+        assertEquals(response, result);
+    }
+
+    @Test
+    void completeOrderAndNotify_shouldReturnMappedResponse() {
+        Long idOrder = 2L;
+        Order order = new Order();
+        OrderResponse response = new OrderResponse();
+
+        when(orderServicePort.completeOrderAndNotify(idOrder)).thenReturn(order);
+        when(orderResponseMapper.toResponse(order)).thenReturn(response);
+
+        OrderResponse result = orderHandler.completeOrderAndNotify(idOrder);
+
+        assertEquals(response, result);
+    }
+
+    @Test
+    void deliverOrder_shouldReturnMappedResponse() {
+        Long idOrder = 3L;
+        String pin = "1234";
+        Order order = new Order();
+        OrderResponse response = new OrderResponse();
+
+        when(orderServicePort.deliverOrder(idOrder, pin)).thenReturn(order);
+        when(orderResponseMapper.toResponse(order)).thenReturn(response);
+
+        OrderResponse result = orderHandler.deliverOrder(idOrder, pin);
+
+        assertEquals(response, result);
+    }
+
+    @Test
+    void cancelOrder_shouldReturnMappedResponse() {
+        Long idOrder = 4L;
+        Order order = new Order();
+        OrderResponse response = new OrderResponse();
+
+        when(orderServicePort.cancelOrder(idOrder)).thenReturn(order);
+        when(orderResponseMapper.toResponse(order)).thenReturn(response);
+
+        OrderResponse result = orderHandler.cancelOrder(idOrder);
+
+        assertEquals(response, result);
+    }
 
 }

@@ -8,6 +8,7 @@ public class Track {
     private Long idClient;
 
     private Long idEmployee;
+    private Long idRestaurant;
 
     private String previousState;
 
@@ -16,10 +17,11 @@ public class Track {
     public Track() {
     }
 
-    public Track(Long idOrder, Long idClient, Long idEmployee, String previousState, String newState) {
+    public Track(Long idOrder, Long idClient, Long idEmployee, Long idRestaurant, String previousState, String newState) {
         this.idOrder = idOrder;
         this.idClient = idClient;
         this.idEmployee = idEmployee;
+        this.idRestaurant = idRestaurant;
         this.previousState = previousState;
         this.newState = newState;
     }
@@ -62,5 +64,13 @@ public class Track {
 
     public void setNewState(String newState) {
         this.newState = newState;
+    }
+
+    public Long getIdRestaurant() {
+        return idRestaurant;
+    }
+
+    public void setIdRestaurant(Long idRestaurant) {
+        this.idRestaurant = idRestaurant;
     }
 }
